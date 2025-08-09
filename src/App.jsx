@@ -3,7 +3,108 @@ import React from "react";
 import "./App.css";
 import "./MinutesSection.css";
 import "./celtic-font.css";
+
 import MinutesSection from "./MinutesSection";
+
+const issuesList = [
+  "Working with Ancestors, being part of a strand of disadvantaged ancestors, but also in the stream of those who lived wisely and with vigour.",
+  "Seeing the bigger picture of your own life within the context of land, world and spirit.",
+  "Focussing on shrine and daily ritual/ spiritual practice & its rhythms.",
+  "Revisiting significant journeys or dreams as a group practice.",
+  "Finding better support/ resources for continuing your daily practice.",
+  "Nourishing the relationship with your Spirits",
+  "Sorting health problems: getting help; allowing help from spirits to flow through your whole life.",
+  "Celebrating the integration of journeying with your whole life.",
+  "Standing in your power enables you to appreciate others’ gifts more clearly. Explore where you step up, step back, step out, resign.",
+  "Shape-shifting in a world that is rapidly changing.",
+  "Recognizing resistance to new ideas/methods; better listening as part of the work",
+  "Growing closer to allies and spirits whom you work with.",
+  "Pilgrimage as part of understanding the larger patterns.",
+  "Cutting away what is not working. Housekeeping our practice.",
+  "Cultivating simplicity when things become complex.",
+  "The leader has laws that keep everyone safe, the herd has families, and every individual has their own honour.  Explore boundaries.",
+  "Working on definition and clarity in shamanic work.",
+  "Defining yourself in your family/work/professional life.",
+  "Giving attention to spaces and boundaries as opportunities to view the world.",
+  "Digging deep and bringing forth treasures and help for community issues.",
+  "Teaching people how to journey.",
+  "Acknowledging the transformation that has already happened in your life: allowing it to root, nourishing the change, and trusting it to grow.",
+  "Responding creatively to what has arisen, allowing it to take shape.",
+  "Journeying as a group/ journeying in pairs on issues.",
+  "Checking overlaps and influences: retaining our safe boundaries.",
+  "Deepening your ability to merge with spiritual sources."
+];
+
+const peerReviewModelPanel = {
+  title: "Peer-Review Model for Groups",
+  content: [
+    "Standing by each other’s work.",
+    "TASK INGREDIENTS. Group work online for each session.",
+    "DIRECT WITNESSING: Embodied first-hand experience. (Seen, felt, sensed) Body language",
+    "RECORDED EXPERIENCES: Vocal report, written notes, drawing, painting, ritual, our embodiment of the work. Records kept for the group.",
+    "SPIRIT WITNESS: From Sharing Together Upholding the 3 Candles which Illuminate every Darkness: TRUTH, NATURE & KNOWLEDGE With clarity, kindness, and understanding",
+    "YOUR INGREDIENTS. (What matters to me when someone is looking at my work). Honouring the essence of your craft and service.",
+    "OTHER PERSON’S INGREDIENTS. (What matters to me when I am looking at someone else’s work). Honouring the gifts & approaches of other’s craft and service",
+    "SUPPORT CREATED: Through Storytelling. Creating an oral contract. Discuss, negotiate and agree. We honour, recognise, appreciate,  celebrate & are inspired by each other’s gifts & strengths. Mirroring & Naming what arises. Feedback that helps bond the group. Pair & group-work that helps extend everyone’s range & confidence."
+  ]
+};
+
+const rightPanels = [
+  {
+    title: "How Peer Review Serves Our Practice",
+    content: [
+      "Doing the right thing. Maintaining ethical practice.",
+      "Caring for each other, for clients, for land, community.",
+      "Using yourself to the best of your abilities.",
+      "Being in groups: learning from others; celebrating with others.",
+      "Getting feedback and inspiration from others.",
+      "Grounding the story of the work.",
+      "Learning from & being inspired by others’ experience and perspectives.",
+      "Giving and receiving compassionate and constructive notes without accusation or resentment.",
+      "Gate Keeping: checking competence and connective understanding in practice.",
+      "Keeping ourselves and our work safe for all concerned.",
+      "Using power responsibly, and how to recognise this.",
+      "Encouraging others to trust their own power and discrimination to guide their lives.",
+      "Appreciating the creative approaches that broaden the work",
+      "Acknowledging that things sometimes don’t work, or work-out well.",
+      "Brain-storming with a back-up journey to keep things on track.",
+      "Working in the presence of spirit.",
+      "Enabling others to explore areas where they need to stretch.",
+      "Enabling others to find stable modes and models to ground safely.",
+      "Supporting each other’s unique contribution to all walks of life."
+    ]
+  },
+  {
+    title: "Appraisal in a Group Session",
+    content: [
+      "In each session, opportunities to appraise yourself and the group work arise.",
+      "This is not like the ubiquitous ‘approval ratings’ that are everywhere at present, but rather like listening to the balance of work together as the voice of the spirit wind that sweeps over everything, to gives us breath and inspiration, to clarify and clean what is muddled, and to open a space where we note what has changed, what needs changing, what is in process.",
+      "Following this metaphor through the elements, how was the work?",
+      "What was warm and supportive? What was uncomfortable or oppressive?",
+      "What flowed? What felt stuck, unresolved? What needs cleaning out?",
+      "What felt solid and embodied? What didn’t quite come together?",
+      "What was inspired? What was unclear? What needs a clearer blueprint?",
+      "What was experienced? What changed? What is currently rippling out?",
+      "The Three Candles of Spirit: In appraisal, we are sensitive to each other, holding the circle as a sacred meeting where ‘the three candles that illumine every darkness: truth, nature and knowledge’ can burn freely in everyone’s soul cauldrons: reminding us of the needs and requirements of All That Is that we each experience:",
+      "Coire Gorias/Cauldron of Warming: our instinct, stability, nourishment, warmth, health, belonging to the physical world with other beings. NATURE.",
+      "Coire Ernmae /Cauldron of Vocation: our intuition, gifts, emotional support, exchanges, flexibility, integrity, belonging to the world of ancestors. TRUTH.",
+      "Coire Sois/ Cauldron of Knowledge: our insight, understanding, spiritual poise, beliefs, ideas, concepts, belonging to the world of spirit. KNOWLEDGE.",
+      "Shamanic Balance and Neutrality: Appraisal is not about expecting perfection, nor an opportunity to criticize yourself or others: it is about shamanic balance and shamanic neutrality: the way our work changes the universe into more harmonious lines, and the way we can get out of the way of ourselves to allow spirit to make those changes. Learning those two things is everything in this work.  We each remain the ‘journey wrangler.’"
+    ]
+  }
+];
+
+function CollapsiblePanel({ title, children, defaultOpen = false }) {
+  const [open, setOpen] = React.useState(defaultOpen);
+  return (
+    <div className="collapsible-panel" style={{ marginBottom: '1.2rem', background: '#f3f1e7', borderRadius: 10, boxShadow: '0 1px 6px rgba(80,70,50,0.07)' }}>
+      <button onClick={() => setOpen(o => !o)} style={{ width: '100%', textAlign: 'left', background: '#e0ddd2', border: 'none', fontWeight: 700, fontSize: '1.1rem', padding: '0.7rem 1rem', cursor: 'pointer', color: '#2a3a5a' }}>
+        {open ? '▼' : '►'} {title}
+      </button>
+      {open && <div style={{ padding: '0.7rem 1.2rem 1rem 1.2rem' }}>{children}</div>}
+    </div>
+  );
+}
 
 const sections = [
   {
@@ -111,48 +212,74 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <div className="heading-stone-bg">
-        <h1 className="heading-celtic">Walkers Between the Worlds</h1>
-        <h3 className="heading-celtic">Peer Review Group Meeting</h3>
+    <div style={{ display: 'flex', width: '100vw', minHeight: '100vh', gap: '2.5rem', alignItems: 'flex-start', justifyContent: 'center' }}>
+      {/* Left collapsible */}
+      <div style={{ flex: '0 0 320px', minWidth: 0, marginTop: '2.5rem' }}>
+        <CollapsiblePanel title="Issues & Topics for Peer-Review Work">
+          <ul style={{ paddingLeft: 18, margin: 0 }}>
+            {issuesList.map((item, i) => <li key={i} style={{ marginBottom: 6 }}>{item}</li>)}
+          </ul>
+        </CollapsiblePanel>
+        <CollapsiblePanel title={peerReviewModelPanel.title}>
+          <ul style={{ paddingLeft: 18, margin: 0 }}>
+            {peerReviewModelPanel.content.map((item, i) => <li key={i} style={{ marginBottom: 6 }}>{item}</li>)}
+          </ul>
+        </CollapsiblePanel>
       </div>
-      <div className="minutes-section">
-        <label htmlFor="meeting-date" style={{ fontWeight: 600, fontSize: '1.1rem' }}>Meeting Date:</label>
-        <input
-          id="meeting-date"
-          type="date"
-          value={meetingDate}
-          onChange={e => setMeetingDate(e.target.value)}
-          style={{
-            fontSize: '1.1rem',
-            padding: '0.3rem 0.7rem',
-            borderRadius: '6px',
-            border: '1px solid #bfc4d1',
-            background: '#fff',
-            color: '#2a3a5a',
-          }}
-        />
-        <button
-          onClick={handleDateSave}
-          className="save-btn"
-          style={{ padding: '0.3rem 1.2rem', fontSize: '1.1rem' }}
-        >
-          Save
-        </button>
-        {dateSaved && <span className="saved-msg">Saved!</span>}
+      {/* Main form */}
+      <div className="container" style={{ flex: 1, minWidth: 0, maxWidth: 900, margin: '2.5rem 0' }}>
+        <div className="heading-stone-bg">
+          <h1 className="heading-celtic">Walkers Between the Worlds</h1>
+          <h3 className="heading-celtic">Peer Review Group Meeting</h3>
+        </div>
+        <div className="minutes-section">
+          <label htmlFor="meeting-date" style={{ fontWeight: 600, fontSize: '1.1rem' }}>Meeting Date:</label>
+          <input
+            id="meeting-date"
+            type="date"
+            value={meetingDate}
+            onChange={e => setMeetingDate(e.target.value)}
+            style={{
+              fontSize: '1.1rem',
+              padding: '0.3rem 0.7rem',
+              borderRadius: '6px',
+              border: '1px solid #bfc4d1',
+              background: '#fff',
+              color: '#2a3a5a',
+            }}
+          />
+          <button
+            onClick={handleDateSave}
+            className="save-btn"
+            style={{ padding: '0.3rem 1.2rem', fontSize: '1.1rem' }}
+          >
+            Save
+          </button>
+          {dateSaved && <span className="saved-msg">Saved!</span>}
+        </div>
+        {sections.map((section, idx) => (
+          <MinutesSection
+            key={section.id}
+            section={section}
+            textareaRef={el => (sectionRefs.current[idx] = el)}
+          />
+        ))}
+        <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+          <button className="save-btn" style={{ fontSize: '1.15rem', padding: '0.7rem 2.2rem' }} onClick={handleSaveAll}>
+            Save Entire Form
+          </button>
+          {saveAllMsg && <span className="saved-msg" style={{ marginLeft: '1.2rem' }}>{saveAllMsg}</span>}
+        </div>
       </div>
-      {sections.map((section, idx) => (
-        <MinutesSection
-          key={section.id}
-          section={section}
-          textareaRef={el => (sectionRefs.current[idx] = el)}
-        />
-      ))}
-      <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
-        <button className="save-btn" style={{ fontSize: '1.15rem', padding: '0.7rem 2.2rem' }} onClick={handleSaveAll}>
-          Save Entire Form
-        </button>
-        {saveAllMsg && <span className="saved-msg" style={{ marginLeft: '1.2rem' }}>{saveAllMsg}</span>}
+      {/* Right collapsible */}
+      <div style={{ flex: '0 0 340px', minWidth: 0, marginTop: '2.5rem' }}>
+        {rightPanels.map((panel, i) => (
+          <CollapsiblePanel key={panel.title} title={panel.title} defaultOpen={i === 0}>
+            <ul style={{ paddingLeft: 18, margin: 0 }}>
+              {panel.content.map((item, j) => <li key={j} style={{ marginBottom: 6 }}>{item}</li>)}
+            </ul>
+          </CollapsiblePanel>
+        ))}
       </div>
     </div>
   );
