@@ -98,7 +98,22 @@ function CollapsiblePanel({ title, children, defaultOpen = false }) {
   const [open, setOpen] = React.useState(defaultOpen);
   return (
     <div className="collapsible-panel" style={{ marginBottom: '1.2rem', background: '#f3f1e7', borderRadius: 10, boxShadow: '0 1px 6px rgba(80,70,50,0.07)' }}>
-      <button onClick={() => setOpen(o => !o)} style={{ width: '100%', textAlign: 'left', background: '#e0ddd2', border: 'none', fontWeight: 700, fontSize: '1.1rem', padding: '0.7rem 1rem', cursor: 'pointer', color: '#2a3a5a' }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width: '100%',
+          textAlign: 'left',
+          background: '#e0ddd2',
+          border: 'none',
+          fontWeight: 700,
+          fontSize: '1.1rem',
+          padding: '0.7rem 1rem',
+          cursor: 'pointer',
+          color: '#2a3a5a',
+          outline: 'none',
+        }}
+        tabIndex={0}
+      >
         {open ? '▼' : '►'} {title}
       </button>
       {open && <div style={{ padding: '0.7rem 1.2rem 1rem 1.2rem' }}>{children}</div>}
@@ -147,7 +162,7 @@ const sections = [
     id: 6,
     title: "Secretary & Record Keeping",
     prompt:
-      "One person to take responsibility of secretary for each session with an understudy, to record a brief précis of work, to be shared by all. Swop roles regularly, so one person is not responsible every time and becomes swamped.",
+      "One person to take responsibility of secretary for each session with an understudy, to record a brief précis of work, to be shared by all. Swap roles regularly, so one person is not responsible every time and becomes swamped.",
   },
   {
     id: 7,
@@ -159,7 +174,7 @@ const sections = [
     id: 8,
     title: "Set Next Session",
     prompt:
-      "Set clear aims, dates, and times for next session.",
+      "Set clear aims, a date and time for the next session.",
   },
 ];
 
@@ -213,8 +228,20 @@ function App() {
 
   return (
     <div style={{ display: 'flex', width: '100vw', minHeight: '100vh', gap: '2.5rem', alignItems: 'flex-start', justifyContent: 'center' }}>
-      {/* Left collapsible */}
-      <div style={{ flex: '0 0 320px', minWidth: 0, marginTop: '2.5rem' }}>
+      {/* Left collapsible - sticky */}
+      <div
+        style={{
+          flex: '0 0 320px',
+          minWidth: 0,
+          marginTop: '2.5rem',
+          position: 'sticky',
+          top: '0.5rem',
+          alignSelf: 'flex-start',
+          zIndex: 2,
+          maxHeight: 'calc(100vh - 1rem)',
+          overflowY: 'auto',
+        }}
+      >
         <CollapsiblePanel title="Issues & Topics for Peer-Review Work">
           <ul style={{ paddingLeft: 18, margin: 0 }}>
             {issuesList.map((item, i) => <li key={i} style={{ marginBottom: 6 }}>{item}</li>)}
@@ -271,8 +298,20 @@ function App() {
           {saveAllMsg && <span className="saved-msg" style={{ marginLeft: '1.2rem' }}>{saveAllMsg}</span>}
         </div>
       </div>
-      {/* Right collapsible */}
-      <div style={{ flex: '0 0 340px', minWidth: 0, marginTop: '2.5rem' }}>
+      {/* Right collapsible - sticky */}
+      <div
+        style={{
+          flex: '0 0 340px',
+          minWidth: 0,
+          marginTop: '2.5rem',
+          position: 'sticky',
+          top: '0.5rem',
+          alignSelf: 'flex-start',
+          zIndex: 2,
+          maxHeight: 'calc(100vh - 1rem)',
+          overflowY: 'auto',
+        }}
+      >
         {rightPanels.map((panel) => (
           <CollapsiblePanel key={panel.title} title={panel.title}>
             <ul style={{ paddingLeft: 18, margin: 0 }}>

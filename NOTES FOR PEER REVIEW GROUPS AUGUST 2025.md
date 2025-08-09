@@ -11,7 +11,7 @@ Your peer review group is for you to shape together. Topics will arise to work w
 5. Does your online milieu have a spatial identity? Journey together to understand what kind of spirit place it is: it is still there when you are not meeting together and can be visited.
 6. One person to take responsibility of secretary for each session with an understudy, to record a brief précis of work, to be shared by all. Swop roles regularly, so one person is not responsible everytime and  becomes swamped.
 7. Each session to have time for appraisal of work or your agenda at the end of the session. See below.
-8. Set clear aims, dates, and times for next session.
+8. Set clear aims, with a date and time for the next session.
 
 
 
