@@ -273,8 +273,8 @@ function App() {
       </div>
       {/* Right collapsible */}
       <div style={{ flex: '0 0 340px', minWidth: 0, marginTop: '2.5rem' }}>
-        {rightPanels.map((panel, i) => (
-          <CollapsiblePanel key={panel.title} title={panel.title} defaultOpen={i === 0}>
+        {rightPanels.map((panel) => (
+          <CollapsiblePanel key={panel.title} title={panel.title}>
             <ul style={{ paddingLeft: 18, margin: 0 }}>
               {panel.content.map((item, j) => <li key={j} style={{ marginBottom: 6 }}>{item}</li>)}
             </ul>
