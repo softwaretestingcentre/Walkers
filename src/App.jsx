@@ -227,22 +227,11 @@ function App() {
   };
 
   return (
-    <div style={{ display: 'flex', width: '100vw', minHeight: '100vh', gap: '2.5rem', alignItems: 'flex-start', justifyContent: 'center' }}>
+    <div className="app-layout">
       {/* Left collapsible - sticky */}
-      <div
-        style={{
-          flex: '0 0 320px',
-          minWidth: 0,
-          marginTop: '2.5rem',
-          position: 'sticky',
-          top: '0.5rem',
-          alignSelf: 'flex-start',
-          zIndex: 2,
-          maxHeight: 'calc(100vh - 1rem)',
-          overflowY: 'auto',
-        }}
-      >
-        <CollapsiblePanel title="Issues & Topics for Peer-Review Work">
+      <div className="left-sidebar">
+        <div className="sidebar-content">
+          <CollapsiblePanel title="Issues & Topics for Peer-Review Work">
           <ul style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
             {issuesList.map((item, i) => (
               <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5em', marginBottom: 6 }}>
@@ -270,13 +259,15 @@ function App() {
             ))}
           </ul>
         </CollapsiblePanel>
+        </div>
       </div>
       {/* Main form */}
-      <div className="container" style={{ flex: 1, minWidth: 0, maxWidth: 900, margin: '2.5rem 0' }}>
-        <div className="heading-stone-bg">
-          <h1 className="heading-celtic">Walkers Between the Worlds</h1>
-          <h3 className="heading-celtic">Peer Review Group Meeting</h3>
-        </div>
+      <div className="main-content">
+        <div className="container" style={{ flex: 1, minWidth: 0, maxWidth: 900, margin: '2.5rem 0' }}>
+          <div className="heading-stone-bg">
+            <h1 className="heading-celtic">Walkers Between the Worlds</h1>
+            <h3 className="heading-celtic">Peer Review Group Meeting</h3>
+          </div>
         <div className="minutes-section">
           <label htmlFor="meeting-date" style={{ fontWeight: 600, fontSize: '1.1rem' }}>Meeting Date:</label>
           <input
@@ -309,28 +300,18 @@ function App() {
             textareaRef={el => (sectionRefs.current[idx] = el)}
           />
         ))}
-        <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
-          <button className="save-btn" style={{ fontSize: '1.15rem', padding: '0.7rem 2.2rem' }} onClick={handleSaveAll}>
-            Save Entire Form
-          </button>
-          {saveAllMsg && <span className="saved-msg" style={{ marginLeft: '1.2rem' }}>{saveAllMsg}</span>}
+          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+            <button className="save-btn" style={{ fontSize: '1.15rem', padding: '0.7rem 2.2rem' }} onClick={handleSaveAll}>
+              Save Entire Form
+            </button>
+            {saveAllMsg && <span className="saved-msg" style={{ marginLeft: '1.2rem' }}>{saveAllMsg}</span>}
+          </div>
         </div>
       </div>
       {/* Right collapsible - sticky */}
-      <div
-        style={{
-          flex: '0 0 340px',
-          minWidth: 0,
-          marginTop: '2.5rem',
-          position: 'sticky',
-          top: '0.5rem',
-          alignSelf: 'flex-start',
-          zIndex: 2,
-          maxHeight: 'calc(100vh - 1rem)',
-          overflowY: 'auto',
-        }}
-      >
-        {rightPanels.map((panel) => (
+      <div className="right-sidebar">
+        <div className="sidebar-content">
+          {rightPanels.map((panel) => (
           <CollapsiblePanel key={panel.title} title={panel.title}>
             <ul style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
               {panel.content.map((item, j) => {
@@ -368,6 +349,7 @@ function App() {
             </ul>
           </CollapsiblePanel>
         ))}
+        </div>
       </div>
     </div>
   );
