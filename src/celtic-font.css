@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap');
+
+.heading-celtic {
+  font-family: 'Uncial Antiqua', cursive, serif;
+  font-size: 2.5rem;
+  text-align: center;
+  color: #2a3a5a;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.04em;
+}
+
+h3.heading-celtic {
+  font-size: 1.5em;
+  line-height: 1.2;
+}
+
