@@ -243,13 +243,31 @@ function App() {
         }}
       >
         <CollapsiblePanel title="Issues & Topics for Peer-Review Work">
-          <ul style={{ paddingLeft: 18, margin: 0 }}>
-            {issuesList.map((item, i) => <li key={i} style={{ marginBottom: 6 }}>{item}</li>)}
+          <ul style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
+            {issuesList.map((item, i) => (
+              <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5em', marginBottom: 6 }}>
+                <img
+                  src="/triskel-pattern.svg"
+                  alt="triskel"
+                  style={{ width: 18, height: 18, marginTop: 2, flexShrink: 0, opacity: 0.7 }}
+                />
+                <span>{item}</span>
+              </li>
+            ))}
           </ul>
         </CollapsiblePanel>
         <CollapsiblePanel title={peerReviewModelPanel.title}>
-          <ul style={{ paddingLeft: 18, margin: 0 }}>
-            {peerReviewModelPanel.content.map((item, i) => <li key={i} style={{ marginBottom: 6 }}>{item}</li>)}
+          <ul style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
+            {peerReviewModelPanel.content.map((item, i) => (
+              <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5em', marginBottom: 6 }}>
+                <img
+                  src="/triskel-pattern.svg"
+                  alt="triskel"
+                  style={{ width: 18, height: 18, marginTop: 2, flexShrink: 0, opacity: 0.7 }}
+                />
+                <span>{item}</span>
+              </li>
+            ))}
           </ul>
         </CollapsiblePanel>
       </div>
@@ -314,8 +332,39 @@ function App() {
       >
         {rightPanels.map((panel) => (
           <CollapsiblePanel key={panel.title} title={panel.title}>
-            <ul style={{ paddingLeft: 18, margin: 0 }}>
-              {panel.content.map((item, j) => <li key={j} style={{ marginBottom: 6 }}>{item}</li>)}
+            <ul style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
+              {panel.content.map((item, j) => {
+                // For 'Appraisal in a Group Session', bold headings as in the Notes doc
+                let contentNode = item;
+                if (panel.title === 'Appraisal in a Group Session') {
+                  // Headings from the Notes doc
+                  const headings = [
+                    'Following this metaphor through the elements, how was the work?',
+                    'The Three Candles of Spirit:',
+                    'Coire Gorias/Cauldron of Warming:',
+                    'Coire Ernmae /Cauldron of Vocation:',
+                    'Coire Sois/ Cauldron of Knowledge:',
+                    'Shamanic Balance and Neutrality:'
+                  ];
+                  // If item matches a heading, render bold
+                  headings.forEach((h) => {
+                    if (item.trim().startsWith(h)) {
+                      contentNode = <div><b>{h}</b><span>{item.split(h)[1]}</span></div>;
+                    }
+                  });
+                  
+                }
+                return (
+                  <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5em', marginBottom: 6 }}>
+                    <img
+                      src="/triskel-pattern.svg"
+                      alt="triskel"
+                      style={{ width: 18, height: 18, marginTop: 2, flexShrink: 0, opacity: 0.7 }}
+                    />
+                    <span>{contentNode}</span>
+                  </li>
+                );
+              })}
             </ul>
           </CollapsiblePanel>
         ))}
