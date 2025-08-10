@@ -11,11 +11,12 @@ exports.handler = async function(event, context) {
     };
   }
 
-  const { section, content } = JSON.parse(event.body || '{}');
-  if (!section || typeof content !== 'string') {
+
+  const { section, content, date } = JSON.parse(event.body || '{}');
+  if (!section || typeof content !== 'string' || !date) {
     return {
       statusCode: 400,
-      body: 'Missing section or content',
+      body: 'Missing section, content, or date',
     };
   }
 
@@ -28,12 +29,13 @@ exports.handler = async function(event, context) {
     await client.connect();
     await client.query(`CREATE TABLE IF NOT EXISTS minutes (
       section TEXT PRIMARY KEY,
-      content TEXT NOT NULL
+      content TEXT NOT NULL,
+      date TEXT NOT NULL
     )`);
     await client.query(
-      `INSERT INTO minutes (section, content) VALUES ($1, $2)
-       ON CONFLICT (section) DO UPDATE SET content = EXCLUDED.content`,
-      [section, content]
+      `INSERT INTO minutes (section, content, date) VALUES ($1, $2, $3)
+       ON CONFLICT (section) DO UPDATE SET content = EXCLUDED.content, date = EXCLUDED.date`,
+      [section, content, date]
     );
     await client.end();
     return {

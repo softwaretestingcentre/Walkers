@@ -26,7 +26,7 @@ exports.handler = async function(event, context) {
 
   try {
     await client.connect();
-    const res = await client.query('SELECT content FROM minutes WHERE section = $1', [section]);
+    const res = await client.query('SELECT content, date FROM minutes WHERE section = $1', [section]);
     await client.end();
     if (res.rows.length === 0) {
       return {
@@ -36,7 +36,7 @@ exports.handler = async function(event, context) {
     }
     return {
       statusCode: 200,
-      body: JSON.stringify({ content: res.rows[0].content }),
+      body: JSON.stringify({ content: res.rows[0].content, date: res.rows[0].date }),
     };
   } catch (err) {
     return {
