@@ -224,11 +224,16 @@ function App() {
       return fetch("/.netlify/functions/saveMinutes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ section: `minutes-section-${section.id}`, content: value }),
+        body: JSON.stringify({
+          section: `minutes-section-${section.id}`,
+          content: value,
+          date: meetingDate
+        }),
       }).then(res => {
         if (!res.ok) throw new Error("API error");
       }).catch(() => {
-        localStorage.setItem(`minutes-section-${slug}`, value);
+        // Store as JSON string with date for local fallback
+        localStorage.setItem(`minutes-section-${slug}`, JSON.stringify({ content: value, date: meetingDate }));
       });
     });
     await Promise.all(savePromises);
