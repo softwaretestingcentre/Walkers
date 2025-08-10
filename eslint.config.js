@@ -22,8 +22,30 @@ export default defineConfig([
         sourceType: 'module',
       },
     },
+
     rules: {
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+  // Netlify Functions Node.js override
+  {
+    files: ["netlify/functions/**/*.js"],
+    languageOptions: {
+      ecmaVersion: 2021,
+      sourceType: "script",
+      globals: {
+        require: "readonly",
+        exports: "readonly",
+        process: "readonly",
+        module: "readonly"
+      },
+      env: {
+        node: true
+      }
+    },
+    rules: {
+      // Allow unused args for Netlify handler signature
+      "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
+    }
+  }
 ])
