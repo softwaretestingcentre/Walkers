@@ -312,6 +312,7 @@ function App() {
           <MinutesSection
             key={section.id}
             section={section}
+            meetingDate={meetingDate}
             textareaRef={el => (sectionRefs.current[idx] = el)}
           />
         ))}
