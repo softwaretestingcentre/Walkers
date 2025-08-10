@@ -263,7 +263,7 @@ function App() {
       </div>
       {/* Main form */}
       <div className="main-content">
-        <div className="container" style={{ flex: 1, minWidth: 0, maxWidth: 900, margin: '2.5rem 0' }}>
+        <div className="container">
           <div className="heading-stone-bg">
             <h1 className="heading-celtic">Walkers Between the Worlds</h1>
             <h3 className="heading-celtic">Peer Review Group Meeting</h3>
