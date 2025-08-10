@@ -4,7 +4,7 @@ This is a Vite React app for recording and saving editable minutes from meetings
 
 ## Features
 - 9 editable sections, each with a prompt from the "Suggested Initial Work" list
-- Save and load minutes for each section using your browser's local storage
+- Save and load minutes for each section using your browser's local storage or a PostgreSQL database (via Netlify Functions and Neon)
 - Simple, clear, and modern UI
 
 ## Getting Started
@@ -19,12 +19,25 @@ This is a Vite React app for recording and saving editable minutes from meetings
    ```
 3. Open your browser to the local address shown in the terminal (usually http://localhost:5173)
 
-## Project Structure
-- `src/App.jsx`: Main app component with editable minutes sections
-- `src/MinutesSection.jsx`: Reusable component for each section
+## Backend & Persistence
 
-## Customization
-You can edit the prompts or add more sections by modifying the `sections` array in `App.jsx`.
+- **Netlify Functions**: Serverless backend endpoints for saving and loading minutes
+- **Neon PostgreSQL**: Persistent cloud database for storing meeting minutes
+- **pg**: Node.js PostgreSQL client used in serverless functions
+
+## How It Works
+- Each section's notes are saved to the database via Netlify Functions (`/.netlify/functions/saveMinutes` and `getMinutes`).
+- If the backend is unavailable, the app falls back to localStorage for offline use.
+- The backend connection string is managed securely via environment variables (never committed to the repo).
+
+## Project Structure
+- `src/App.jsx`: Main app component with editable minutes sections and save-all logic
+- `src/MinutesSection.jsx`: Reusable component for each section, handles API/localStorage logic
+- `netlify/functions/`: Contains serverless functions for database access
+
+## Development & Deployment
+- Local development uses Vite for fast refresh and React HMR
+- Deploy to Netlify for live backend/API endpoints and production hosting
 
 ---
 

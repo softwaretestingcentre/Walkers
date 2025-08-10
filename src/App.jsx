@@ -213,15 +213,25 @@ function App() {
   const slugify = (title) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   // Save all notes for the current date
-  const handleSaveAll = () => {
-    // Save meeting date
+  const handleSaveAll = async () => {
+    // Save meeting date (local only for now)
     localStorage.setItem("meeting-date", meetingDate);
-    // Save all section notes
-    sections.forEach((section, idx) => {
+    // Save all section notes to API in parallel
+    const savePromises = sections.map((section, idx) => {
       const slug = slugify(section.title);
       const value = sectionRefs.current[idx]?.value || "";
-      localStorage.setItem(`minutes-section-${slug}`, value);
+      // Try API, fallback to localStorage
+      return fetch("/.netlify/functions/saveMinutes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ section: `minutes-section-${section.id}`, content: value }),
+      }).then(res => {
+        if (!res.ok) throw new Error("API error");
+      }).catch(() => {
+        localStorage.setItem(`minutes-section-${slug}`, value);
+      });
     });
+    await Promise.all(savePromises);
     setSaveAllMsg("All notes saved!");
     setTimeout(() => setSaveAllMsg(""), 1500);
   };
