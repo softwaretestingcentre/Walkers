@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./MinutesSection.css";
 
-function MinutesSection({ section }) {
+function MinutesSection({ section, meetingDate }) {
 
   const storageKey = `minutes-section-${section.id}`;
   const [text, setText] = useState("");
@@ -37,12 +37,12 @@ function MinutesSection({ section }) {
       const res = await fetch("/.netlify/functions/saveMinutes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ section: storageKey, content: text }),
+        body: JSON.stringify({ section: storageKey, content: text, date: meetingDate }),
       });
       if (!res.ok) throw new Error("API error");
     } catch {
       // fallback to localStorage
-      localStorage.setItem(storageKey, text);
+      localStorage.setItem(storageKey, JSON.stringify({ content: text, date: meetingDate }));
     }
     setSaved(true);
     setTimeout(() => setSaved(false), 1200);
