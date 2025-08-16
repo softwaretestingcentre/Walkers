@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 function CollapsiblePanel({ title, children, defaultOpen = false }) {
   const [open, setOpen] = React.useState(defaultOpen);
@@ -28,10 +27,5 @@ function CollapsiblePanel({ title, children, defaultOpen = false }) {
   );
 }
 
-CollapsiblePanel.propTypes = {
-  title: PropTypes.string.isRequired,
-  children: PropTypes.node,
-  defaultOpen: PropTypes.bool,
-};
 
 export default CollapsiblePanel;
