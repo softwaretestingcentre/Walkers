@@ -7,90 +7,8 @@ import MinutesSection from "./MinutesSection";
 import issuesList from "./issuesList";
 import peerReviewModelPanel from "./peerReviewModelPanel";
 import rightPanels from "./rightPanels";
-
-function CollapsiblePanel({ title, children, defaultOpen = false }) {
-  const [open, setOpen] = React.useState(defaultOpen);
-  return (
-    <div className="collapsible-panel" style={{ marginBottom: '1.2rem', background: '#f3f1e7', borderRadius: 10, boxShadow: '0 1px 6px rgba(80,70,50,0.07)' }}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        style={{
-          width: '100%',
-          textAlign: 'left',
-          background: '#e0ddd2',
-          border: 'none',
-          fontWeight: 700,
-          fontSize: '1.1rem',
-          padding: '0.7rem 1rem',
-          cursor: 'pointer',
-          color: '#2a3a5a',
-          outline: 'none',
-        }}
-        tabIndex={0}
-      >
-        {open ? '▼' : '►'} {title}
-      </button>
-      {open && <div style={{ padding: '0.7rem 1.2rem 1rem 1.2rem' }}>{children}</div>}
-    </div>
-  );
-}
-
-const sections = [
-  {
-    id: 0,
-    title: "Hallowing the Meeting",
-    prompt:
-      "Find ways to hallow the meeting: how you make your circle, how you open and close it, what is invited and thanked. Note what you need as a group to come together in a sacred way, and what modifications you need. (e.g. Singing together is difficult because it becomes distorted: so the one leading the singing is heard, everyone else mutes and sings the same.)",
-  },
-  {
-    id: 1,
-    title: "Sharing Background & Motivations",
-    prompt:
-      "Share your background and current motivations, so you can better attune to each other, creating aims for work that support everyone. Different people can lead, send out links for meeting up etc.",
-  },
-  {
-    id: 2,
-    title: "Mutual Code of Ethics",
-    prompt:
-      "Journey on creating a mutual code of ethics, and agree on a method of working together e.g. timings that are helpful, preparation needed, etc.",
-  },
-  {
-    id: 3,
-    title: "Circle Animal/Spirit",
-    prompt:
-      "Journey together to find the animal/spirit who holds your circle in their care.",
-  },
-  {
-    id: 4,
-    title: "Group & Pair Journeying",
-    prompt:
-      "Journeying as a group and in pairs on your chosen topic. Journeying as individuals who feedback.",
-  },
-  {
-    id: 5,
-    title: "Online Milieu's Spatial Identity",
-    prompt:
-      "Does your online milieu have a spatial identity? Journey together to understand what kind of spirit place it is: it is still there when you are not meeting together and can be visited.",
-  },
-  {
-    id: 6,
-    title: "Secretary & Record Keeping",
-    prompt:
-      "One person to take responsibility of secretary for each session with an understudy, to record a brief précis of work, to be shared by all. Swap roles regularly, so one person is not responsible every time and becomes swamped.",
-  },
-  {
-    id: 7,
-    title: "Session Appraisal",
-    prompt:
-      "Each session to have time for appraisal of work or your agenda at the end of the session.",
-  },
-  {
-    id: 8,
-    title: "Set Next Session",
-    prompt:
-      "Set clear aims, a date and time for the next session.",
-  },
-];
+import sections from "./sections";
+import CollapsiblePanel from "./CollapsiblePanel";
 
 function App() {
   // Date state and persistence
@@ -124,34 +42,20 @@ function App() {
   const [loadingDates, setLoadingDates] = React.useState(false);
   const [loadingNotes, setLoadingNotes] = React.useState(false);
 
-  // Find all dates with notes in localStorage
+  // Get all dates with notes from backend only
   const getAllDatesWithNotes = async () => {
-    const datesSet = new Set();
-    // LocalStorage dates
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('minutes-section-')) {
-        try {
-          const val = JSON.parse(localStorage.getItem(key));
-          if (val && val.date) datesSet.add(val.date);
-        } catch {
-          // ignore JSON parse errors
-        }
-      }
-    }
-    // Backend dates
     try {
       const res = await fetch('/.netlify/functions/listDates');
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data.dates)) {
-          data.dates.forEach(date => datesSet.add(date));
+          return data.dates.sort().reverse();
         }
       }
     } catch {
       // ignore fetch errors
     }
-    return Array.from(datesSet).sort().reverse();
+    return [];
   };
 
   // Show modal and load available dates
@@ -336,82 +240,91 @@ function App() {
             </div>
           </div>
         )}
-        {sections.map((section, idx) => (
-          <React.Fragment key={section.id}>
-            <MinutesSection
-              key={notesKey + '-' + section.id}
-              section={section}
-              meetingDate={meetingDate}
-              textareaRef={el => (sectionRefs.current[idx] = el)}
-              {...(section.id === 4 ? { selectedIssue } : {})}
-              {...(section.id === 8 ? { nextSessionDate, setNextSessionDate, nextSessionTime, setNextSessionTime } : {})}
-            />
-            {/* Add select element in Group & Pair Journeying section */}
-            {section.id === 3 && (
-              <div style={{ margin: '1.2rem 0 2rem 0', background: '#f8f7f3', borderRadius: 8, padding: '1.2rem', boxShadow: '0 1px 6px rgba(80,70,50,0.06)' }}>
-                <label htmlFor="issues-select" style={{ fontWeight: 600, fontSize: '1.05rem', color: '#2a3a5a', marginBottom: 6, display: 'block' }}>
-                  Topic for Group & Pair Journeying:
-                </label>
-                <select
-                  id="issues-select"
-                  style={{
-                    width: '100%',
-                    fontSize: '1.05rem',
-                    padding: '0.5rem 0.7rem',
-                    borderRadius: 6,
-                    border: '1px solid #bfc4d1',
-                    background: '#fff',
-                    color: '#2a3a5a',
-                    marginBottom: 0
-                  }}
-                  value={selectedIssue}
-                  onChange={e => setSelectedIssue(e.target.value)}
-                >
-                  <option value="" disabled>
-                    -- Choose an issue or topic --
-                  </option>
-                  {issuesList.map((item, i) => (
-                    <option key={i} value={item}>{item}</option>
-                  ))}
-                </select>
-              </div>
-            )}
-            {/* Add Appraisal in a Group Session panel inside Session Appraisal section */}
-            {section.id === 7 && (
-              <CollapsiblePanel title="Appraisal in a Group Session">
-                <ul style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
-                  {rightPanels.find(p => p.title === 'Appraisal in a Group Session').content.map((item, j) => {
-                    // Bold headings as in the Notes doc
-                    let contentNode = item;
-                    const headings = [
-                      'Following this metaphor through the elements, how was the work?',
-                      'The Three Candles of Spirit:',
-                      'Coire Gorias/Cauldron of Warming:',
-                      'Coire Ernmae /Cauldron of Vocation:',
-                      'Coire Sois/ Cauldron of Knowledge:',
-                      'Shamanic Balance and Neutrality:'
-                    ];
-                    headings.forEach((h) => {
-                      if (item.trim().startsWith(h)) {
-                        contentNode = <div><b>{h}</b><span>{item.split(h)[1]}</span></div>;
-                      }
-                    });
-                    return (
-                      <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5em', marginBottom: 6 }}>
-                        <img
-                          src="/triskel-pattern.svg"
-                          alt="triskel"
-                          style={{ width: 18, height: 18, marginTop: 2, flexShrink: 0, opacity: 0.7 }}
-                        />
-                        <span>{contentNode}</span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </CollapsiblePanel>
-            )}
-          </React.Fragment>
-        ))}
+          {sections.map((section, idx) => {
+            const extraProps = {};
+            if (section.id === 4) extraProps.selectedIssue = selectedIssue;
+            if (section.id === 8) {
+              extraProps.nextSessionDate = nextSessionDate;
+              extraProps.setNextSessionDate = setNextSessionDate;
+              extraProps.nextSessionTime = nextSessionTime;
+              extraProps.setNextSessionTime = setNextSessionTime;
+            }
+            return (
+              <React.Fragment key={section.id}>
+                <MinutesSection
+                  key={notesKey + '-' + section.id}
+                  section={section}
+                  meetingDate={meetingDate}
+                  textareaRef={el => (sectionRefs.current[idx] = el)}
+                  {...extraProps}
+                />
+                {/* Add select element in Group & Pair Journeying section */}
+                {section.id === 3 && (
+                  <div style={{ margin: '1.2rem 0 2rem 0', background: '#f8f7f3', borderRadius: 8, padding: '1.2rem', boxShadow: '0 1px 6px rgba(80,70,50,0.06)' }}>
+                    <label htmlFor="issues-select" style={{ fontWeight: 600, fontSize: '1.05rem', color: '#2a3a5a', marginBottom: 6, display: 'block' }}>
+                      Topic for Group & Pair Journeying:
+                    </label>
+                    <select
+                      id="issues-select"
+                      style={{
+                        width: '100%',
+                        fontSize: '1.05rem',
+                        padding: '0.5rem 0.7rem',
+                        borderRadius: 6,
+                        border: '1px solid #bfc4d1',
+                        background: '#fff',
+                        color: '#2a3a5a',
+                        marginBottom: 0
+                      }}
+                      value={selectedIssue}
+                      onChange={e => setSelectedIssue(e.target.value)}
+                    >
+                      <option value="" disabled>
+                        -- Choose an issue or topic --
+                      </option>
+                      {issuesList.map((item, i) => (
+                        <option key={i} value={item}>{item}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                {/* Add Appraisal in a Group Session panel inside Session Appraisal section */}
+                {section.id === 7 && (
+                  <CollapsiblePanel title="Appraisal in a Group Session">
+                    <ul style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
+                      {rightPanels.find(p => p.title === 'Appraisal in a Group Session').content.map((item, j) => {
+                        // Bold headings as in the Notes doc
+                        let contentNode = item;
+                        const headings = [
+                          'Following this metaphor through the elements, how was the work?',
+                          'The Three Candles of Spirit:',
+                          'Coire Gorias/Cauldron of Warming:',
+                          'Coire Ernmae /Cauldron of Vocation:',
+                          'Coire Sois/ Cauldron of Knowledge:',
+                          'Shamanic Balance and Neutrality:'
+                        ];
+                        headings.forEach((h) => {
+                          if (item.trim().startsWith(h)) {
+                            contentNode = <div><b>{h}</b><span>{item.split(h)[1]}</span></div>;
+                          }
+                        });
+                        return (
+                          <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5em', marginBottom: 6 }}>
+                            <img
+                              src="/triskel-pattern.svg"
+                              alt="triskel"
+                              style={{ width: 18, height: 18, marginTop: 2, flexShrink: 0, opacity: 0.7 }}
+                            />
+                            <span>{contentNode}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </CollapsiblePanel>
+                )}
+              </React.Fragment>
+            );
+          })}
           <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
             <button className="save-btn" style={{ fontSize: '1.15rem', padding: '0.7rem 2.2rem' }} onClick={handleSaveAll}>
               Save Entire Form
@@ -428,7 +341,7 @@ function App() {
               margin: "1rem 0",
               fontWeight: 600
             }}>
-              Warning: Could not save to the database. Your notes are saved locally in your browser.
+              Warning: Could not save to the database. Please try again later.
             </div>
           )}
         </div>
