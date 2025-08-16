@@ -26,7 +26,7 @@ exports.handler = async function(event, context) {
 
   try {
     await client.connect();
-    const res = await client.query('SELECT content, date FROM minutes WHERE section = $1', [section]);
+    const res = await client.query('SELECT content, date FROM minutes WHERE section = $1', [decodeURIComponent(section)]);
     await client.end();
     if (res.rows.length === 0) {
       return {

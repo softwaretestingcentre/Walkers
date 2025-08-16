@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import "./MinutesSection.css";
 
 function MinutesSection({ section, meetingDate, selectedIssue }) {
-  const storageKey = `minutes-section-${section.id}`;
+  const storageKey = section.title;
   const [text, setText] = useState("");
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);

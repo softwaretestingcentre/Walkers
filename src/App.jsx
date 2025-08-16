@@ -118,10 +118,92 @@ function App() {
     setTimeout(() => setDateSaved(false), 1200);
   };
 
+
   // For saving all notes at once
   const [saveAllMsg, setSaveAllMsg] = React.useState("");
   // Refs to access each textarea value
   const sectionRefs = React.useRef([]);
+
+  // View Notes state
+  const [showNotesModal, setShowNotesModal] = React.useState(false);
+  const [availableDates, setAvailableDates] = React.useState([]);
+  const [loadingDates, setLoadingDates] = React.useState(false);
+  const [loadingNotes, setLoadingNotes] = React.useState(false);
+
+  // Find all dates with notes in localStorage
+  const getAllDatesWithNotes = async () => {
+    const datesSet = new Set();
+    // LocalStorage dates
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('minutes-section-')) {
+        try {
+          const val = JSON.parse(localStorage.getItem(key));
+          if (val && val.date) datesSet.add(val.date);
+        } catch {
+          // ignore JSON parse errors
+        }
+      }
+    }
+    // Backend dates
+    try {
+      const res = await fetch('/.netlify/functions/listDates');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.dates)) {
+          data.dates.forEach(date => datesSet.add(date));
+        }
+      }
+    } catch {
+      // ignore fetch errors
+    }
+    return Array.from(datesSet).sort().reverse();
+  };
+
+  // Show modal and load available dates
+  const handleViewNotes = async () => {
+    setLoadingDates(true);
+    setShowNotesModal(true);
+    const dates = await getAllDatesWithNotes();
+    setAvailableDates(dates);
+    setLoadingDates(false);
+  };
+
+  // Load all notes for a selected date
+  const handleSelectDate = async (date) => {
+    setLoadingNotes(true);
+    // Try to load from API first, fallback to localStorage
+    await Promise.all(sections.map(async (section, idx) => {
+      // Try API
+      try {
+        const res = await fetch(`/.netlify/functions/getMinutes?section=${encodeURIComponent(section.title)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.date === date) {
+            if (sectionRefs.current[idx]) sectionRefs.current[idx].value = data.content || "";
+            return;
+          }
+        }
+      } catch {
+        // ignore fetch errors, fallback to localStorage
+      }
+      // Fallback to localStorage
+      const raw = localStorage.getItem(section.title);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed.date === date) {
+            if (sectionRefs.current[idx]) sectionRefs.current[idx].value = parsed.content || "";
+          }
+        } catch {
+          // ignore JSON parse errors
+        }
+      }
+    }));
+    setMeetingDate(date);
+    setShowNotesModal(false);
+    setLoadingNotes(false);
+  };
 
   // Helper to slugify section titles (same as in MinutesSection)
   const slugify = (title) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -212,12 +294,57 @@ function App() {
           <button
             onClick={handleDateSave}
             className="save-btn"
-            style={{ padding: '0.3rem 1.2rem', fontSize: '1.1rem' }}
+            style={{ padding: '0.3rem 1.2rem', fontSize: '1.1rem', marginRight: 8 }}
           >
             Save
           </button>
+          <button
+            onClick={handleViewNotes}
+            className="save-btn"
+            style={{ padding: '0.3rem 1.2rem', fontSize: '1.1rem', background: '#e0ddd2', color: '#2a3a5a', border: '1px solid #bfc4d1' }}
+          >
+            View Notes
+          </button>
           {dateSaved && <span className="saved-msg">Saved!</span>}
         </div>
+
+        {/* Modal for viewing notes by date */}
+        {showNotesModal && (
+          <div style={{
+            position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+            background: 'rgba(0,0,0,0.25)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <div style={{ background: '#fff', borderRadius: 10, padding: '2rem 2.5rem', minWidth: 320, boxShadow: '0 2px 16px rgba(80,70,50,0.13)' }}>
+              <h3 style={{ marginTop: 0 }}>View Notes by Date</h3>
+              {loadingDates ? (
+                <div style={{ color: '#888', fontStyle: 'italic' }}>Loading dates...</div>
+              ) : (
+                <>
+                  {availableDates.length === 0 ? (
+                    <div style={{ color: '#a33', fontWeight: 600 }}>No saved notes found.</div>
+                  ) : (
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                      {availableDates.map(date => (
+                        <li key={date} style={{ marginBottom: 8 }}>
+                          <button
+                            style={{ fontSize: '1.05rem', padding: '0.3rem 1.2rem', borderRadius: 6, border: '1px solid #bfc4d1', background: '#f3f1e7', color: '#2a3a5a', cursor: 'pointer' }}
+                            onClick={() => handleSelectDate(date)}
+                            disabled={loadingNotes}
+                          >
+                            {date}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              )}
+              <div style={{ marginTop: 18, textAlign: 'right' }}>
+                <button onClick={() => setShowNotesModal(false)} style={{ fontSize: '1rem', padding: '0.3rem 1.2rem', borderRadius: 6, border: '1px solid #bfc4d1', background: '#eee', color: '#2a3a5a' }}>Close</button>
+              </div>
+            </div>
+          </div>
+        )}
         {sections.map((section, idx) => (
           <React.Fragment key={section.id}>
             <MinutesSection
