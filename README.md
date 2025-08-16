@@ -15,7 +15,7 @@ This is a Vite React app for recording and saving editable minutes from meetings
    ```
 2. Start the development server:
    ```bash
-   npm run dev
+   netlify dev
    ```
 3. Open your browser to the local address shown in the terminal (usually http://localhost:5173)
 

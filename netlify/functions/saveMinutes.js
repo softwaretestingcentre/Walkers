@@ -20,6 +20,7 @@ exports.handler = async function(event, context) {
     };
   }
 
+
   const client = new Client({
     connectionString: process.env.NETLIFY_DATABASE_URL,
     ssl: { rejectUnauthorized: false },
@@ -27,14 +28,16 @@ exports.handler = async function(event, context) {
 
   try {
     await client.connect();
+    // Create new table with unique id
     await client.query(`CREATE TABLE IF NOT EXISTS minutes (
-      section TEXT PRIMARY KEY,
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      section TEXT NOT NULL,
       content TEXT NOT NULL,
       date TEXT NOT NULL
     )`);
+    // Insert new record with generated id
     await client.query(
-      `INSERT INTO minutes (section, content, date) VALUES ($1, $2, $3)
-       ON CONFLICT (section) DO UPDATE SET content = EXCLUDED.content, date = EXCLUDED.date`,
+      `INSERT INTO minutes (section, content, date) VALUES ($1, $2, $3)`,
       [section, content, date]
     );
     await client.end();

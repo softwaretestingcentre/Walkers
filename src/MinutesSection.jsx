@@ -1,8 +1,9 @@
+
+
 import React, { useState, useEffect } from "react";
 import "./MinutesSection.css";
 
-function MinutesSection({ section, meetingDate }) {
-
+function MinutesSection({ section, meetingDate, selectedIssue }) {
   const storageKey = `minutes-section-${section.id}`;
   const [text, setText] = useState("");
   const [saved, setSaved] = useState(false);
@@ -32,17 +33,27 @@ function MinutesSection({ section, meetingDate }) {
 
   const handleSave = async () => {
     setSaved(false);
+    // For Group & Pair Journeying, prepend selected issue if set
+    let contentToSave = text;
+    const slug = section.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+    if (slug === "group-pair-journeying" && selectedIssue) {
+      contentToSave = `${selectedIssue}\n${text}`;
+    }
+
     // Save to API
     try {
       const res = await fetch("/.netlify/functions/saveMinutes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ section: storageKey, content: text, date: meetingDate }),
+        body: JSON.stringify({ section: storageKey, content: contentToSave, date: meetingDate }),
       });
       if (!res.ok) throw new Error("API error");
     } catch {
-      // fallback to localStorage
-      localStorage.setItem(storageKey, JSON.stringify({ content: text, date: meetingDate }));
+      // fallback to localStorage (store as JSON with content and date)
+      localStorage.setItem(storageKey, JSON.stringify({ content: contentToSave, date: meetingDate }));
     }
     setSaved(true);
     setTimeout(() => setSaved(false), 1200);
