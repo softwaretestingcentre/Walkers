@@ -191,8 +191,13 @@ function App() {
     setLoadingNotes(false);
   };
 
+
   // Add state for selected issue/topic for Group & Pair Journeying
   const [selectedIssue, setSelectedIssue] = React.useState("");
+
+  // Add state for next session date/time (for Set Next Session section)
+  const [nextSessionDate, setNextSessionDate] = React.useState("");
+  const [nextSessionTime, setNextSessionTime] = React.useState("");
 
   // Add state for API/database error
   const [dbError, setDbError] = React.useState(false);
@@ -205,6 +210,10 @@ function App() {
       // For Group & Pair Journeying, prepend selected issue/topic if set
       if (section.id === 4 && selectedIssue) {
         value = `${selectedIssue}\n${value}`;
+      }
+      // For Set Next Session, include date and time if set
+      if (section.id === 8) {
+        value = `${nextSessionDate} ${nextSessionTime}\n${value}`;
       }
       // Only save if there is some content (non-empty string after trimming)
       if (!value || value.trim() === "") return null;
@@ -335,6 +344,7 @@ function App() {
               meetingDate={meetingDate}
               textareaRef={el => (sectionRefs.current[idx] = el)}
               {...(section.id === 4 ? { selectedIssue } : {})}
+              {...(section.id === 8 ? { nextSessionDate, setNextSessionDate, nextSessionTime, setNextSessionTime } : {})}
             />
             {/* Add select element in Group & Pair Journeying section */}
             {section.id === 3 && (

@@ -25,7 +25,7 @@ function MinutesSection({ section, meetingDate, selectedIssue }) {
       setLoading(false);
     };
     fetchSection();
-  }, [storageKey]);
+  }, [meetingDate, storageKey]);
 
   const handleSave = async () => {
     setSaved(false);
@@ -38,6 +38,11 @@ function MinutesSection({ section, meetingDate, selectedIssue }) {
     if (slug === "group-pair-journeying" && selectedIssue) {
       contentToSave = `${selectedIssue}\n${text}`;
     }
+    // For Set Next Session, include date and time if set
+    if (section.slug === "set-next-session") {
+      contentToSave = `${nextSessionDate} ${nextSessionTime}\n${text}`;
+    }
+
 
     // Save to API
     try {
