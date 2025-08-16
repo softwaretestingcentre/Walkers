@@ -230,7 +230,7 @@ function App() {
             {section.id === 3 && (
               <div style={{ margin: '1.2rem 0 2rem 0', background: '#f8f7f3', borderRadius: 8, padding: '1.2rem', boxShadow: '0 1px 6px rgba(80,70,50,0.06)' }}>
                 <label htmlFor="issues-select" style={{ fontWeight: 600, fontSize: '1.05rem', color: '#2a3a5a', marginBottom: 6, display: 'block' }}>
-                  Select an Issue or Topic for Group & Pair Journeying:
+                  Topic for Group & Pair Journeying:
                 </label>
                 <select
                   id="issues-select"
@@ -255,6 +255,40 @@ function App() {
                   ))}
                 </select>
               </div>
+            )}
+            {/* Add Appraisal in a Group Session panel inside Session Appraisal section */}
+            {section.id === 7 && (
+              <CollapsiblePanel title="Appraisal in a Group Session">
+                <ul style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
+                  {rightPanels.find(p => p.title === 'Appraisal in a Group Session').content.map((item, j) => {
+                    // Bold headings as in the Notes doc
+                    let contentNode = item;
+                    const headings = [
+                      'Following this metaphor through the elements, how was the work?',
+                      'The Three Candles of Spirit:',
+                      'Coire Gorias/Cauldron of Warming:',
+                      'Coire Ernmae /Cauldron of Vocation:',
+                      'Coire Sois/ Cauldron of Knowledge:',
+                      'Shamanic Balance and Neutrality:'
+                    ];
+                    headings.forEach((h) => {
+                      if (item.trim().startsWith(h)) {
+                        contentNode = <div><b>{h}</b><span>{item.split(h)[1]}</span></div>;
+                      }
+                    });
+                    return (
+                      <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5em', marginBottom: 6 }}>
+                        <img
+                          src="/triskel-pattern.svg"
+                          alt="triskel"
+                          style={{ width: 18, height: 18, marginTop: 2, flexShrink: 0, opacity: 0.7 }}
+                        />
+                        <span>{contentNode}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </CollapsiblePanel>
             )}
           </React.Fragment>
         ))}
@@ -282,44 +316,22 @@ function App() {
       {/* Right collapsible - sticky */}
       <div className="right-sidebar">
         <div className="sidebar-content">
-          {rightPanels.map((panel) => (
-          <CollapsiblePanel key={panel.title} title={panel.title}>
-            <ul style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
-              {panel.content.map((item, j) => {
-                // For 'Appraisal in a Group Session', bold headings as in the Notes doc
-                let contentNode = item;
-                if (panel.title === 'Appraisal in a Group Session') {
-                  // Headings from the Notes doc
-                  const headings = [
-                    'Following this metaphor through the elements, how was the work?',
-                    'The Three Candles of Spirit:',
-                    'Coire Gorias/Cauldron of Warming:',
-                    'Coire Ernmae /Cauldron of Vocation:',
-                    'Coire Sois/ Cauldron of Knowledge:',
-                    'Shamanic Balance and Neutrality:'
-                  ];
-                  // If item matches a heading, render bold
-                  headings.forEach((h) => {
-                    if (item.trim().startsWith(h)) {
-                      contentNode = <div><b>{h}</b><span>{item.split(h)[1]}</span></div>;
-                    }
-                  });
-                  
-                }
-                return (
+          {rightPanels.filter(panel => panel.title !== 'Appraisal in a Group Session').map((panel) => (
+            <CollapsiblePanel key={panel.title} title={panel.title}>
+              <ul style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
+                {panel.content.map((item, j) => (
                   <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5em', marginBottom: 6 }}>
                     <img
                       src="/triskel-pattern.svg"
                       alt="triskel"
                       style={{ width: 18, height: 18, marginTop: 2, flexShrink: 0, opacity: 0.7 }}
                     />
-                    <span>{contentNode}</span>
+                    <span>{item}</span>
                   </li>
-                );
-              })}
-            </ul>
-          </CollapsiblePanel>
-        ))}
+                ))}
+              </ul>
+            </CollapsiblePanel>
+          ))}
         </div>
       </div>
     </div>
