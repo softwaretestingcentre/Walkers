@@ -13,7 +13,7 @@ const NextSessionFields = ({ nextSessionDate, setNextSessionDate, nextSessionTim
       type="date"
       value={nextSessionDate}
       onChange={e => setNextSessionDate(e.target.value)}
-      style={{ fontSize: '1rem', padding: '0.2rem 0.6rem', borderRadius: '6px', border: '1px solid #bfc4d1', background: '#fff', color: '#2a3a5a' }}
+      style={{ fontSize: '1rem', padding: '0.2rem 0.6rem', borderRadius: '6px', border: '1px solid #bfc4d1', background: 'rgb(224, 221, 210)', color: '#2a3a5a' }}
     />
     <label htmlFor="next-session-time" style={{ fontWeight: 600 }}>Time:</label>
     <input
@@ -21,7 +21,7 @@ const NextSessionFields = ({ nextSessionDate, setNextSessionDate, nextSessionTim
       type="time"
       value={nextSessionTime}
       onChange={e => setNextSessionTime(e.target.value)}
-      style={{ fontSize: '1rem', padding: '0.2rem 0.6rem', borderRadius: '6px', border: '1px solid #bfc4d1', background: '#fff', color: '#2a3a5a' }}
+      style={{ fontSize: '1rem', padding: '0.2rem 0.6rem', borderRadius: '6px', border: '1px solid #bfc4d1', background: 'rgb(224, 221, 210)', color: '#2a3a5a' }}
     />
   </div>
 );

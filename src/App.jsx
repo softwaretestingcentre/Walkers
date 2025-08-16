@@ -182,7 +182,7 @@ function App() {
               padding: '0.3rem 0.7rem',
               borderRadius: '6px',
               border: '1px solid #bfc4d1',
-              background: '#fff',
+              background: 'rgb(224, 221, 210)',
               color: '#2a3a5a',
             }}
           />
