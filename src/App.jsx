@@ -104,16 +104,10 @@ function App() {
   const [dateSaved, setDateSaved] = React.useState(false);
 
   React.useEffect(() => {
-    const savedDate = localStorage.getItem("meeting-date");
-    if (savedDate) {
-      setMeetingDate(savedDate);
-    } else {
-      setMeetingDate(getToday());
-    }
+  setMeetingDate(getToday());
   }, []);
 
   const handleDateSave = () => {
-    localStorage.setItem("meeting-date", meetingDate);
     setDateSaved(true);
     setTimeout(() => setDateSaved(false), 1200);
   };
@@ -170,10 +164,12 @@ function App() {
   };
 
   // Load all notes for a selected date
+  const [notesKey, setNotesKey] = React.useState(0);
   const handleSelectDate = async (date) => {
     setLoadingNotes(true);
-    // Try to load from API first, fallback to localStorage
     await Promise.all(sections.map(async (section, idx) => {
+      // Always clear the section first
+      if (sectionRefs.current[idx]) sectionRefs.current[idx].value = "";
       // Try API
       try {
         const res = await fetch(`/.netlify/functions/getMinutes?section=${encodeURIComponent(section.title)}`);
@@ -185,28 +181,15 @@ function App() {
           }
         }
       } catch {
-        // ignore fetch errors, fallback to localStorage
+        // ignore fetch errors
       }
-      // Fallback to localStorage
-      const raw = localStorage.getItem(section.title);
-      if (raw) {
-        try {
-          const parsed = JSON.parse(raw);
-          if (parsed.date === date) {
-            if (sectionRefs.current[idx]) sectionRefs.current[idx].value = parsed.content || "";
-          }
-        } catch {
-          // ignore JSON parse errors
-        }
-      }
+      // If not found, section remains cleared
     }));
     setMeetingDate(date);
+    setNotesKey(k => k + 1); // force re-render
     setShowNotesModal(false);
     setLoadingNotes(false);
   };
-
-  // Helper to slugify section titles (same as in MinutesSection)
-  const slugify = (title) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   // Add state for selected issue/topic for Group & Pair Journeying
   const [selectedIssue, setSelectedIssue] = React.useState("");
@@ -216,15 +199,15 @@ function App() {
 
   // Save all notes for the current date
   const handleSaveAll = async () => {
-    localStorage.setItem("meeting-date", meetingDate);
     setDbError(false); // reset error state
     const savePromises = sections.map((section, idx) => {
-      const slug = slugify(section.title);
       let value = sectionRefs.current[idx]?.value || "";
       // For Group & Pair Journeying, prepend selected issue/topic if set
       if (section.id === 4 && selectedIssue) {
         value = `${selectedIssue}\n${value}`;
       }
+      // Only save if there is some content (non-empty string after trimming)
+      if (!value || value.trim() === "") return null;
       // Use section.title as the section column value
       return fetch("/.netlify/functions/saveMinutes", {
         method: "POST",
@@ -238,9 +221,8 @@ function App() {
         if (!res.ok) throw new Error("API error");
       }).catch(() => {
         setDbError(true);
-        localStorage.setItem(`minutes-section-${slug}`, JSON.stringify({ content: value, date: meetingDate }));
       });
-    });
+    }).filter(Boolean);
     await Promise.all(savePromises);
     setSaveAllMsg("All notes saved!");
     setTimeout(() => setSaveAllMsg(""), 1500);
@@ -348,6 +330,7 @@ function App() {
         {sections.map((section, idx) => (
           <React.Fragment key={section.id}>
             <MinutesSection
+              key={notesKey + '-' + section.id}
               section={section}
               meetingDate={meetingDate}
               textareaRef={el => (sectionRefs.current[idx] = el)}

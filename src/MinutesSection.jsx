@@ -9,22 +9,18 @@ function MinutesSection({ section, meetingDate, selectedIssue }) {
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Try to load from API, fallback to localStorage
   useEffect(() => {
     const fetchSection = async () => {
       try {
         const res = await fetch(`/.netlify/functions/getMinutes?section=${encodeURIComponent(storageKey)}`);
         if (res.ok) {
           const data = await res.json();
-          setText(data.content || "");
-        } else {
-          // fallback to localStorage
-          const savedText = localStorage.getItem(storageKey);
-          if (savedText) setText(savedText);
+          if (data.date === meetingDate) {
+            setText(data.content || "");
+          }
         }
       } catch {
-        const savedText = localStorage.getItem(storageKey);
-        if (savedText) setText(savedText);
+        // ignore fetch errors
       }
       setLoading(false);
     };
@@ -52,8 +48,7 @@ function MinutesSection({ section, meetingDate, selectedIssue }) {
       });
       if (!res.ok) throw new Error("API error");
     } catch {
-      // fallback to localStorage (store as JSON with content and date)
-      localStorage.setItem(storageKey, JSON.stringify({ content: contentToSave, date: meetingDate }));
+      // ignore save errors
     }
     setSaved(true);
     setTimeout(() => setSaved(false), 1200);
@@ -70,21 +65,7 @@ function MinutesSection({ section, meetingDate, selectedIssue }) {
   const [nextSessionDate, setNextSessionDate] = useState("");
   const [nextSessionTime, setNextSessionTime] = useState("");
 
-  // Load next session date/time from localStorage
-  useEffect(() => {
-    if (isSetNextSession) {
-      const d = localStorage.getItem('next-session-date');
-      const t = localStorage.getItem('next-session-time');
-      if (d) setNextSessionDate(d);
-      if (t) setNextSessionTime(t);
-    }
-  }, [isSetNextSession]);
 
-  const handleNextSessionSave = () => {
-    localStorage.setItem('next-session-date', nextSessionDate);
-    localStorage.setItem('next-session-time', nextSessionTime);
-    handleSave();
-  };
 
   return (
     <div className="minutes-section">
@@ -121,7 +102,7 @@ function MinutesSection({ section, meetingDate, selectedIssue }) {
             rows={5}
             placeholder="Record notes here..."
           />
-          <button onClick={isSetNextSession ? handleNextSessionSave : handleSave} className="save-btn">
+          <button onClick={handleSave} className="save-btn">
             Save
           </button>
           {saved && <span className="saved-msg">Saved!</span>}
