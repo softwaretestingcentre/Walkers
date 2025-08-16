@@ -10,10 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
+    "@netlify/functions": "^4.2.1",
+    "@netlify/neon": "^0.1.0",
     "@netlify/vite-plugin": "^2.5.4",
+    "pg": "^8.11.3",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "pg": "^8.11.3"
+    "react-dom": "^19.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",

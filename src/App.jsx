@@ -1,4 +1,3 @@
-
 import React from "react";
 import "./App.css";
 import "./MinutesSection.css";
@@ -212,27 +211,36 @@ function App() {
   // Helper to slugify section titles (same as in MinutesSection)
   const slugify = (title) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
+  // Add state for selected issue/topic for Group & Pair Journeying
+  const [selectedIssue, setSelectedIssue] = React.useState("");
+
+  // Add state for API/database error
+  const [dbError, setDbError] = React.useState(false);
+
   // Save all notes for the current date
   const handleSaveAll = async () => {
-    // Save meeting date (local only for now)
     localStorage.setItem("meeting-date", meetingDate);
-    // Save all section notes to API in parallel
+    setDbError(false); // reset error state
     const savePromises = sections.map((section, idx) => {
       const slug = slugify(section.title);
-      const value = sectionRefs.current[idx]?.value || "";
-      // Try API, fallback to localStorage
+      let value = sectionRefs.current[idx]?.value || "";
+      // For Group & Pair Journeying, prepend selected issue/topic if set
+      if (section.id === 4 && selectedIssue) {
+        value = `${selectedIssue}\n${value}`;
+      }
+      // Use section.title as the section column value
       return fetch("/.netlify/functions/saveMinutes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          section: `minutes-section-${section.id}`,
+          section: section.title,
           content: value,
           date: meetingDate
         }),
       }).then(res => {
         if (!res.ok) throw new Error("API error");
       }).catch(() => {
-        // Store as JSON string with date for local fallback
+        setDbError(true);
         localStorage.setItem(`minutes-section-${slug}`, JSON.stringify({ content: value, date: meetingDate }));
       });
     });
@@ -246,34 +254,21 @@ function App() {
       {/* Left collapsible - sticky */}
       <div className="left-sidebar">
         <div className="sidebar-content">
-          <CollapsiblePanel title="Issues & Topics for Peer-Review Work">
-          <ul style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
-            {issuesList.map((item, i) => (
-              <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5em', marginBottom: 6 }}>
-                <img
-                  src="/triskel-pattern.svg"
-                  alt="triskel"
-                  style={{ width: 18, height: 18, marginTop: 2, flexShrink: 0, opacity: 0.7 }}
-                />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </CollapsiblePanel>
-        <CollapsiblePanel title={peerReviewModelPanel.title}>
-          <ul style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
-            {peerReviewModelPanel.content.map((item, i) => (
-              <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5em', marginBottom: 6 }}>
-                <img
-                  src="/triskel-pattern.svg"
-                  alt="triskel"
-                  style={{ width: 18, height: 18, marginTop: 2, flexShrink: 0, opacity: 0.7 }}
-                />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </CollapsiblePanel>
+          {/* Removed Issues & Topics panel from sidebar */}
+          <CollapsiblePanel title={peerReviewModelPanel.title}>
+            <ul style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
+              {peerReviewModelPanel.content.map((item, i) => (
+                <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5em', marginBottom: 6 }}>
+                  <img
+                    src="/triskel-pattern.svg"
+                    alt="triskel"
+                    style={{ width: 18, height: 18, marginTop: 2, flexShrink: 0, opacity: 0.7 }}
+                  />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </CollapsiblePanel>
         </div>
       </div>
       {/* Main form */}
@@ -309,12 +304,43 @@ function App() {
           {dateSaved && <span className="saved-msg">Saved!</span>}
         </div>
         {sections.map((section, idx) => (
-          <MinutesSection
-            key={section.id}
-            section={section}
-            meetingDate={meetingDate}
-            textareaRef={el => (sectionRefs.current[idx] = el)}
-          />
+          <React.Fragment key={section.id}>
+            <MinutesSection
+              section={section}
+              meetingDate={meetingDate}
+              textareaRef={el => (sectionRefs.current[idx] = el)}
+            />
+            {/* Add select element in Group & Pair Journeying section */}
+            {section.id === 3 && (
+              <div style={{ margin: '1.2rem 0 2rem 0', background: '#f8f7f3', borderRadius: 8, padding: '1.2rem', boxShadow: '0 1px 6px rgba(80,70,50,0.06)' }}>
+                <label htmlFor="issues-select" style={{ fontWeight: 600, fontSize: '1.05rem', color: '#2a3a5a', marginBottom: 6, display: 'block' }}>
+                  Select an Issue or Topic for Group & Pair Journeying:
+                </label>
+                <select
+                  id="issues-select"
+                  style={{
+                    width: '100%',
+                    fontSize: '1.05rem',
+                    padding: '0.5rem 0.7rem',
+                    borderRadius: 6,
+                    border: '1px solid #bfc4d1',
+                    background: '#fff',
+                    color: '#2a3a5a',
+                    marginBottom: 0
+                  }}
+                  value={selectedIssue}
+                  onChange={e => setSelectedIssue(e.target.value)}
+                >
+                  <option value="" disabled>
+                    -- Choose an issue or topic --
+                  </option>
+                  {issuesList.map((item, i) => (
+                    <option key={i} value={item}>{item}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </React.Fragment>
         ))}
           <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
             <button className="save-btn" style={{ fontSize: '1.15rem', padding: '0.7rem 2.2rem' }} onClick={handleSaveAll}>
@@ -322,6 +348,19 @@ function App() {
             </button>
             {saveAllMsg && <span className="saved-msg" style={{ marginLeft: '1.2rem' }}>{saveAllMsg}</span>}
           </div>
+          {dbError && (
+            <div style={{
+              background: "#ffeaea",
+              color: "#a33",
+              border: "1px solid #fbb",
+              borderRadius: 6,
+              padding: "0.8rem 1.2rem",
+              margin: "1rem 0",
+              fontWeight: 600
+            }}>
+              Warning: Could not save to the database. Your notes are saved locally in your browser.
+            </div>
+          )}
         </div>
       </div>
       {/* Right collapsible - sticky */}
