@@ -31,7 +31,7 @@ exports.handler = async function(event, context) {
     if (!date) {
       res = await client.query('SELECT ALL content FROM minutes WHERE section = $1', [decodeURIComponent(section)]);
     } else {
-      res = await client.query('SELECT ALL content, date FROM minutes WHERE section = $1 AND date = $2', [decodeURIComponent(section), decodeURIComponent(date)]);
+      res = await client.query('SELECT ALL content, date FROM minutes WHERE section = $1 AND date = $2 ORDER BY updated_at DESC', [decodeURIComponent(section), decodeURIComponent(date)]);
     }
     await client.end();
     if (res.rows.length === 0) {
@@ -40,7 +40,7 @@ exports.handler = async function(event, context) {
         body: JSON.stringify({ error: 'Not found' }),
       };
     }
-    res.rows.sort((a, b) => b.content.length - a.content.length);
+    // res.rows.sort((a, b) => b.content.length - a.content.length);
     return {
       statusCode: 200,
       body: JSON.stringify({ content: res.rows[0].content, date: res.rows[0].date }),
