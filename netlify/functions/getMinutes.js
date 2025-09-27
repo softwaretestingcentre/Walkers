@@ -26,7 +26,13 @@ exports.handler = async function(event, context) {
 
   try {
     await client.connect();
-    const res = await client.query('SELECT content, date FROM minutes WHERE section = $1', [decodeURIComponent(section)]);
+    let date = event.queryStringParameters && event.queryStringParameters.date;
+    let res;
+    if (!date) {
+      res = await client.query('SELECT ALL content FROM minutes WHERE section = $1', [decodeURIComponent(section)]);
+    } else {
+      res = await client.query('SELECT ALL content, date FROM minutes WHERE section = $1 AND date = $2', [decodeURIComponent(section), decodeURIComponent(date)]);
+    }
     await client.end();
     if (res.rows.length === 0) {
       return {
@@ -34,6 +40,7 @@ exports.handler = async function(event, context) {
         body: JSON.stringify({ error: 'Not found' }),
       };
     }
+    res.rows.sort((a, b) => b.content.length - a.content.length);
     return {
       statusCode: 200,
       body: JSON.stringify({ content: res.rows[0].content, date: res.rows[0].date }),

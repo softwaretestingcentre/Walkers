@@ -37,7 +37,7 @@ function MinutesSection({ section, meetingDate, selectedIssue, nextSessionDate, 
   useEffect(() => {
     const fetchSection = async () => {
       try {
-        const res = await fetch(`/.netlify/functions/getMinutes?section=${encodeURIComponent(section.title)}`);
+        const res = await fetch(`/.netlify/functions/getMinutes?section=${encodeURIComponent(section.title)}&date=${encodeURIComponent(meetingDate)}&all=true`);
         if (res.ok) {
           const data = await res.json();
           if (data.date === meetingDate) {

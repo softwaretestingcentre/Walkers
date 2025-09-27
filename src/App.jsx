@@ -74,15 +74,21 @@ function App() {
     await Promise.all(sections.map(async (section, idx) => {
       // Always clear the section first
       if (sectionRefs.current[idx]) sectionRefs.current[idx].value = "";
-      // Try API
+      // Try API: fetch all records for this section and date
       try {
-        const res = await fetch(`/.netlify/functions/getMinutes?section=${encodeURIComponent(section.title)}`);
+        const res = await fetch(`/.netlify/functions/getMinutes?section=${encodeURIComponent(section.title)}&date=${encodeURIComponent(date)}&all=true`);
         if (res.ok) {
           const data = await res.json();
-          if (data.date === date) {
-            if (sectionRefs.current[idx]) sectionRefs.current[idx].value = data.content || "";
-            return;
+          // If backend returns an array of records, pick the latest
+          let content = "";
+          if (Array.isArray(data.records) && data.records.length > 0) {
+            // Sort by created/updated timestamp descending, pick first
+            const latest = data.records.sort((a, b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at))[0];
+            content = latest.content || "";
+          } else if (data.content && data.date === date) {
+            content = data.content;
           }
+          if (sectionRefs.current[idx]) sectionRefs.current[idx].value = content;
         }
       } catch {
         // ignore fetch errors
