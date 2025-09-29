@@ -40,7 +40,6 @@ exports.handler = async function(event, context) {
         body: JSON.stringify({ error: 'Not found' }),
       };
     }
-    // res.rows.sort((a, b) => b.content.length - a.content.length);
     return {
       statusCode: 200,
       body: JSON.stringify({ content: res.rows[0].content, date: res.rows[0].date }),
