@@ -1,7 +1,7 @@
 
 import { Given, When, Then } from '@cucumber/cucumber';
 
-Given('Walker has opened "View Notes"', function () {
+Given('Walker has opened {string}', function () {
   // TODO: implement step
 });
 
@@ -18,9 +18,5 @@ Then('Walker sees their note {string} mentions {string}', function () {
 });
 
 Then('Walker can see that it mentions {string}', function () {
-  // Write code here that turns the phrase above into concrete actions
-})
-
-Given('Walker has opened {string}', function () {
   // Write code here that turns the phrase above into concrete actions
 })
