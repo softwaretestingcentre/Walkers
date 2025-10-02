@@ -8,4 +8,4 @@ Feature: Viewing meeting notes
   Scenario: Walker has added a solo journey note
     Given Walker has opened "View Notes"
     When Walker selects the date 2025-09-21
-    Then Walker sees their note "Nick - Solo Journey" mentions Silbury Hill
+    Then Walker sees their note "Nick - Solo Journey" mentions Avebury

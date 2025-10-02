@@ -1,11 +1,11 @@
 
 This project is a Vite React app for recording and saving editable minutes from meetings. The main page should have 9 sections, each corresponding to a bullet point from the 'Suggested Initial Work' section. Each section should have an editable text area and a save button. Use localStorage for persistence. Style the app for clarity and usability.
 
-Always re-read these instructions before starting work and report any changes made to the instructions.
+Important! Always re-read these instructions before starting work and report any changes made to the instructions in the chat.
 
 chrome devtools mcp instructions:
 The home page of the website is https://walkersppr.netlify.app/
-Always re-read the feature file before testing a feature
+Important! Always re-read the feature file before testing a feature
 If the scenario is tagged with "@Performance", start a performance trace when running a feature and report it at the end
 Always use a fresh browser tab for each feature
 Always wait up to 5 seconds for the UI to respond
