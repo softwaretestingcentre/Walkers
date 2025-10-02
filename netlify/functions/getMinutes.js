@@ -36,8 +36,8 @@ exports.handler = async function(event, context) {
     await client.end();
     if (res.rows.length === 0) {
       return {
-        statusCode: 404,
-        body: JSON.stringify({ error: 'Not found' }),
+        statusCode: 204,
+        body: JSON.stringify({ error: 'No content' }),
       };
     }
     return {
