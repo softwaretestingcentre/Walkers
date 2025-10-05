@@ -1,3 +1,75 @@
+---
+
+# Writing Better Gherkin
+
+There are several ways to make your Gherkin better. Here are two key pieces of advice from the official Cucumber documentation:
+
+## Describe behaviour
+
+Your scenarios should describe the intended behaviour of the system, not the implementation. In other words, describe what, not how.
+
+For example, for an authentication scenario, you should write:
+
+```gherkin
+When "Bob" logs in
+```
+
+instead of:
+
+```gherkin
+Given I visit "/login"
+When I enter "Bob" in the "user name" field
+And I enter "tester" in the "password" field
+And I press the "login" button
+Then I should see the "welcome" page
+```
+
+The first example is a functional requirement. The second, much longer, example is a procedural reference. Functional requirements are features, but procedures belong in the implementation details.
+
+That way, when the implementation of a feature changes, you'll only need to change the process steps behind the scenes. The behaviour does not have to change just because the implementation does. A good question to ask yourself when writing a feature clause is: “Will this wording need to change if the implementation does?” If the answer is “Yes”, then you should rework it to avoid implementation-specific details. As a side benefit, your scenarios will be a lot shorter and much easier to follow and understand.
+
+## Consider a more declarative style
+
+One way to make scenarios easier to maintain and less brittle is to use a declarative style. Declarative style describes the behaviour of the application, rather than the implementation details. Declarative scenarios read better as "living documentation" and help you focus on the value that the customer is getting, rather than the keystrokes they will use.
+
+Imperative tests communicate details, and in some contexts this style of test is appropriate. However, because they are so closely tied to the mechanics of the current UI, they often require more work to maintain. Any time the implementation changes, the tests need to be updated too.
+
+Here's an example of a feature in an imperative style:
+
+```gherkin
+Feature: Subscribers see different articles based on their subscription level
+  Scenario: Free subscribers see only the free articles
+    Given users with a free subscription can access "FreeArticle1" but not "PaidArticle1"
+    When I type "freeFrieda@example.com" in the email field
+    And I type "validPassword123" in the password field
+    And I press the "Submit" button
+    Then I see "FreeArticle1" on the home page
+    And I do not see "PaidArticle1" on the home page
+
+  Scenario: Subscriber with a paid subscription can access "FreeArticle1" and "PaidArticle1"
+    Given I am on the login page
+    When I type "paidPattya@example.com" in the email field
+    And I type "validPassword123" in the password field
+    And I press the "Submit" button
+    Then I see "FreeArticle1" and "PaidArticle1" on the home page
+```
+
+A more declarative style hides the details of how the application's capabilities are implemented:
+
+```gherkin
+Feature: Subscribers see different articles based on their subscription level
+  Scenario: Free subscribers see only the free articles
+    Given Free Frieda has a free subscription
+    When Free Frieda logs in with her valid credentials
+    Then she sees a Free article
+
+  Scenario: Subscriber with a paid subscription can access both free and paid articles
+    Given Paid Patty has a basic-level paid subscription
+    When Paid Patty logs in with her valid credentials
+    Then she sees a Free article and a Paid article
+```
+
+With a declarative style, each step communicates an idea, but the exact values aren't specified. The details of how the user interacts with the system, such as which specific articles are free or paid, and the subscription level of different test users, are specified in the step definitions (the automation code that interacts with the system). The subscription packages could change in the future. The business could change what content is available to subscribers on free and paid plans, without having to change this scenario and other scenarios that use the same step definitions. By avoiding terms like “click a button” that suggest implementation, the scenario is more resilient to implementation details of the UI. The intent of the scenario remains the same, even if the implementation changes later. In addition, having too many implementation details in a scenario makes it harder to understand the intended behaviour it illustrates.
 
 # Gherkin Reference (Main Section and All Sections Following Keywords)
 

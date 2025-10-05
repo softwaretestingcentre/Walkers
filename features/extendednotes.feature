@@ -1,63 +1,54 @@
 Feature: Meeting notes app extended functionality
-  # Section CRUD and validation
+
+  Background:
+    Given Walker is viewing the meeting notes for date "<date>"
 
   @regression
-  Scenario Outline: User saves and loads notes in a section
-    Given Walker is viewing the meeting notes for date "<date>"
+  Scenario Outline: Notes persist after update
     When Walker enters "<input>" in the "<section>" section
-    And Walker saves the "<section>" section
-    Then the notes in the "<section>" section should be "<expected>" after reload
+    Then the "<section>" notes persist as "<expected>"
 
     Examples:
-      | date       | section               | input                         | expected                      |
-      | 2025-10-05 | Hallowing the Meeting | "Some updated notes"          | "Some updated notes"          |
-      | 2025-10-04 | Hallowing the Meeting | "😀✨漢字"                      | "😀✨漢字"                      |
-      | 2025-10-04 | Hallowing the Meeting | "<script>alert('x')</script>" | "<script>alert('x')</script>" |
+      | date       | section               | input                       | expected                    |
+      | 2025-10-05 | Hallowing the Meeting | Some updated notes          | Some updated notes          |
+      | 2025-10-04 | Hallowing the Meeting | 😀✨漢字                      | 😀✨漢字                      |
+      | 2025-10-04 | Hallowing the Meeting | <script>alert('x')</script> | <script>alert('x')</script> |
 
-  Scenario Outline: User cannot save invalid notes
-    Given Walker is viewing the meeting notes for date "<date>"
+  Scenario Outline: Invalid notes are rejected
     When Walker enters "<input>" in the "<section>" section
-    And Walker saves the "<section>" section
-    Then an error message should be shown for the "<section>" section
+    Then an error is shown for the "<section>" notes
 
     Examples:
-      | date       | section               | input      |
-      | 2025-10-04 | Hallowing the Meeting | ""         |
+      | date       | section               | input |
+      | 2025-10-04 | Hallowing the Meeting |       |
 
-  Scenario: User sees all meeting sections
-    Given Walker is viewing the meeting notes for date "2025-09-26"
-    Then Walker should see all meeting sections with headings, editable text areas, and a Save button for each
+  Scenario: All meeting sections are visible
+    Then all meeting sections are shown with headings, editable areas, and a Save button for each
 
-  Scenario: User views notes for a different date
-    Given Walker is viewing the meeting notes for date "2025-09-26"
+  Scenario: Notes for a different date are displayed
     When Walker selects the date "2025-08-09"
-    Then the notes for date "2025-08-09" should be displayed in all sections
+    Then the notes for date "2025-08-09" are displayed in all sections
 
-  Scenario: Notes are loaded from localStorage
+  Scenario: Previously saved notes are loaded
     Given Walker has previously saved notes for date "2025-09-21"
     When Walker selects the date "2025-09-21"
-    Then the notes for date "2025-08-09" should be displayed in all sections
-  # UI and panel behaviour
+    Then the notes for date "2025-09-21" are displayed in all sections
 
   @Performance
   Scenario: Peer Review Model panel expands and collapses
-    Given Walker is viewing the meeting notes for date "2025-09-26"
-    When Walker toggles the "Peer-Review Model for Groups" panel
-    Then the "Peer-Review Model for Groups" panel should be expanded
-    When Walker toggles the "Peer-Review Model for Groups" panel
-    Then the "Peer-Review Model for Groups" panel should be collapsed
-  # Batch save
+    When Walker expands the "Peer-Review Model for Groups" panel
+    Then the "Peer-Review Model for Groups" panel is expanded
+    When Walker collapses the "Peer-Review Model for Groups" panel
+    Then the "Peer-Review Model for Groups" panel is collapsed
 
   @regression @save-all
-  Scenario: Save the entire form
-    Given Walker is viewing the meeting notes for date "2025-10-04"
+  Scenario: Save all sections at once
     When Walker enters "Agenda updated" in the "Agenda" section
     And Walker enters "Decisions recorded" in the "Decisions" section
-    And Walker saves the entire form
-    Then both the "Agenda" section and the "Decisions" section contain their respective saved text
+    And Walker saves all notes
+    Then the "Agenda" notes persist as "Agenda updated"
+    And the "Decisions" notes persist as "Decisions recorded"
     # Action: verify batch save persists all sections atomically
-  # Autosave
-
   # Concurrency
 
   @regression @concurrency
@@ -72,14 +63,13 @@ Feature: Meeting notes app extended functionality
   @regression @offline-edit
   Scenario: Edit offline and sync when back online
     Given Walker opens the app and goes offline
-    When Walker edits the "Hallowing the Meeting" section to "Offline edit" and clicks save
+    When Walker enters "Offline edit" in the "Hallowing the Meeting" section
+    And Walker saves the "Hallowing the Meeting" section
     And Walker returns online
     Then the app synchronises the offline edits to the server
     # Edge case: conflict resolution and user notification on sync
   # Export/import
-
   # Accessibility
-
   # Security
 
   @regression @xss
