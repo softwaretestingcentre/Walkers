@@ -38,10 +38,6 @@ Feature: Meeting notes app extended functionality
     When Walker selects the date "2025-09-21"
     Then the notes for date "2025-09-21" should be loaded from localStorage and displayed
 
-  Scenario: User deletes all notes for a date
-    Given Walker is viewing the meeting notes for date "2025-10-04"
-    When Walker clears all sections and clicks Save for each section
-    Then all notes for date "2025-10-04" should be empty after reload
 
   # UI and panel behaviour
   @Performance

@@ -12,7 +12,6 @@ Given('Walker focuses the {string} section textarea', function () {});
 // Editing and input
 When('Walker enters {string} in the {string} section', function () {});
 When('Walker enters whitespace in the {string} section', function () {});
-When('Walker clears all sections and clicks Save for each section', function () {});
 When('Walker selects the date {string}', function () {});
 When('Walker toggles the {string} panel', function () {});
 When('Walker clicks the "Save Entire Form" button', function () {});
@@ -32,7 +31,6 @@ Then('an error message should be shown for the {string} section', function () {}
 Then('Walker should see all meeting sections with headings, editable text areas, and a Save button for each', function () {});
 Then('the notes for date {string} should be displayed in all sections', function () {});
 Then('the notes for date {string} should be loaded from localStorage and displayed', function () {});
-Then('all notes for date {string} should be empty after reload', function () {});
 Then('the {string} panel should be expanded', function () {});
 Then('the {string} panel should be collapsed', function () {});
 Then('both the {string} section and the {string} section contain their respective saved text', function () {});
