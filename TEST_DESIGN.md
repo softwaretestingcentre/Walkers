@@ -35,6 +35,8 @@ After creating a feature file, create a matching step definitions file using ghe
 
 Follow the Gherkin standards as detailed in #GherkinReference.md.
 
+Prefer the use of task-based phrases, such as "Saves" over low-level interactions such as "clicks the Save button" when writing steps. 
+
 Then refactor the feature file and step definitions to reduce the number of unique step definitions needed.
 
 Place any tags above the first line of the scenario.
