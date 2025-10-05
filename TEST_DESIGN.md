@@ -35,4 +35,6 @@ After creating a feature file, create a matching step definitions file using ghe
 
 Then refactor the feature file and step definitions to reduce the number of unique step definitions needed.
 
-Always place comments under the scenario.
+Place any tags above the first line of the scenario.
+
+Place any comments after the last line of the scenario.
