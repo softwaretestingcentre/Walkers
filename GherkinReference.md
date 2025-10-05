@@ -1,30 +1,29 @@
+
 # Gherkin Reference (Main Section and All Sections Following Keywords)
 
 Gherkin uses a set of special keywords to give structure and meaning to executable specifications. Each keyword is translated to many spoken languages; in this reference we'll use English.
 
-Most lines in a Gherkin document start with one of the keywords.
 
-Comments are only permitted at the start of a new line, anywhere in the feature file. They begin with zero or more spaces, followed by a hash sign (`#`) and some text. Block comments are currently not supported by Gherkin.
 
-Either spaces or tabs may be used for indentation. The recommended indentation level is two spaces. Here is an example:
+# Gherkin Reference
 
-```
-Feature: Guess the word
-  # The first example has two steps
-  Scenario: Maker starts a game
-    When the Maker starts a game
-    Then the Maker waits for a Breaker to join
+Gherkin is a language for writing structured, executable specifications for software. It uses a set of special keywords to give structure and meaning to specifications. Each keyword is translated to many spoken languages; in this reference, English is used.
 
-  # The second example has three steps
-  Scenario: Breaker joins a game
-    Given the Maker has started a game with the word "silky"
-    When the Breaker joins the Maker's game
-    Then the Breaker must guess a word with 5 characters
-```
+## Table of Contents
+- Keywords
+- Feature
+- Descriptions
+- Rule
+- Example (Scenario)
+- Steps (Given, When, Then, And, But, *)
+- Background
+- Scenario Outline
+- Examples
+- Step Arguments (Doc Strings, Data Tables)
+- Spoken Languages
 
-The trailing portion (after the keyword) of each step is matched to a code block, called a step definition.
+---
 
-Please note that some keywords are followed by a colon (`:`) and some are not. If you add a colon after a keyword that should not be followed by one, your test(s) will be ignored.
 
 ## Keywords
 
@@ -38,14 +37,254 @@ The primary keywords are:
 - Scenario Outline (or Scenario Template)
 - Examples (or Scenarios)
 
-There are a few secondary keywords as well:
+Secondary keywords:
 
 - `"""` (Doc Strings)
 - `|` (Data Tables)
 - `@` (Tags)
 - `#` (Comments)
 
-Gherkin is localised for many spoken languages; each has their own localised equivalent of these keywords.
+Most lines in a Gherkin document start with one of the keywords. Comments are only permitted at the start of a new line, anywhere in the feature file. They begin with zero or more spaces, followed by a hash sign (`#`) and some text. Block comments are not supported.
+
+Either spaces or tabs may be used for indentation. The recommended indentation level is two spaces. Here is an example:
+
+```gherkin
+Feature: Guess the word
+  # The first example has two steps
+  Scenario: Maker starts a game
+    When the Maker starts a game
+    Then the Maker waits for a Breaker to join
+
+  # The second example has three steps
+  Scenario: Breaker joins a game
+    Given the Maker has started a game with the word "silky"
+    When the Breaker joins the Maker's game
+    Then the Breaker must guess a word with 5 characters
+```
+
+---
+
+
+---
+
+## Feature
+
+The `Feature` keyword provides a high-level description of a software feature and groups related scenarios. The first primary keyword in a Gherkin document must always be `Feature`, followed by a colon (`:`) and a short text that describes the feature.
+
+You can add free-form text underneath `Feature` to add more description. These description lines are ignored by Cucumber at runtime, but are available for reporting (they are included by reporting tools like the official HTML formatter).
+
+The purpose is to provide a place for you to document important aspects of the feature, such as a brief explanation and a list of business rules (general acceptance criteria).
+
+The free format description for `Feature` ends when you start a line with the keyword `Background`, `Rule`, `Example`, or `Scenario Outline` (or their alias keywords).
+
+You can place tags above `Feature` to group related features, independent of your file and directory structure.
+
+You can only have a single `Feature` in a `.feature` file.
+
+Example:
+```gherkin
+Feature: Guess the word
+  The word guess game is a turn-based game for two players.
+  The Maker makes a word for the Breaker to guess. The game is over when the Breaker guesses the Maker's word.
+```
+
+---
+
+
+---
+
+## Descriptions
+
+Free-form descriptions (as described above for `Feature`) can also be placed underneath `Example`/`Scenario`, `Background`, `Scenario Outline`, and `Rule`.
+
+You can write anything you like, as long as no line starts with a keyword. Descriptions can be in the form of Markdown and are supported by formatters such as the official HTML formatter.
+
+---
+
+
+---
+
+## Rule
+
+The (optional) `Rule` keyword has been part of Gherkin since v6. The purpose of the `Rule` keyword is to represent one business rule that should be implemented. It provides additional information for a feature. A `Rule` is used to group together several scenarios that belong to this business rule. A `Rule` should contain one or more scenarios that illustrate the particular rule.
+
+Example:
+```gherkin
+Feature: Highlander
+  Rule: There can be only One
+    Example: Only One -- More than one alive
+      Given there are 3 ninjas
+      And there are more than one ninja alive
+      When 2 ninjas meet, they will fight
+      Then one ninja dies (but not me)
+      And there is one ninja less alive
+    Example: Only One -- One alive
+      Given there is only 1 ninja alive
+      Then they will live forever ;-)
+```
+
+---
+
+
+---
+
+## Example (Scenario)
+
+The `Example` (or `Scenario`) keyword introduces a concrete example that illustrates a business rule. It consists of a list of steps. The keyword `Scenario` is a synonym of the keyword `Example`.
+
+You can have as many steps as you like, but it is recommended to have 3-5 steps per example. Too many steps can reduce the expressive power of the example as a specification and documentation.
+
+In addition to being a specification and documentation, an example is also a test. As a whole, your examples are an executable specification of the system.
+
+Examples follow this pattern:
+- Describe an initial context (`Given` steps)
+- Describe an event (`When` steps)
+- Describe an expected outcome (`Then` steps)
+
+Example:
+```gherkin
+Scenario: Maker starts a game
+  When the Maker starts a game
+  Then the Maker waits for a Breaker to join
+
+Scenario: Breaker joins a game
+  Given the Maker has started a game with the word "silky"
+  When the Breaker joins the Maker's game
+  Then the Breaker must guess a word with 5 characters
+```
+
+---
+
+
+---
+
+## Steps (Given, When, Then, And, But, *)
+
+Each step starts with `Given`, `When`, `Then`, `And`, or `But`. Cucumber executes each step in a scenario one at a time, in the sequence you’ve written them in. When Cucumber tries to execute a step, it looks for a matching step definition to execute.
+
+Keywords are not taken into account when looking for a step definition. This means you cannot have a `Given`, `When`, `Then`, `And` or `But` step with the same text as another step.
+
+#### Given
+Describes the initial context of the system. Used to put the system in a known state before the user (or external system) starts interacting with the system (in the `When` steps). Avoid talking about user interaction in `Given`'s. If you were creating use cases, `Given`'s would be your preconditions.
+
+Example:
+```gherkin
+Given the Maker has started a game with the word "silky"
+```
+
+#### When
+Describes an event, or an action. This can be a person interacting with the system, or it can be an event triggered by another system. Try to avoid making assumptions about technology or user interface.
+
+Example:
+```gherkin
+When the Breaker joins the Maker's game
+```
+
+#### Then
+Describes an expected outcome, or result. The step definition of a `Then` step should use an assertion to compare the actual outcome to the expected outcome. Outcomes should be observable outputs, not internal state changes.
+
+Example:
+```gherkin
+Then the Breaker must guess a word with 5 characters
+```
+
+#### And, But
+If you have successive `Given`'s or `Then`'s, you could write them as `And` or `But` for readability.
+
+Example:
+```gherkin
+Given one thing
+And another thing
+And yet another thing
+When I open my eyes
+Then I should see something
+But I shouldn't see something else
+```
+
+#### * (Asterisk)
+Gherkin also supports using an asterisk (`*`) in place of any of the normal step keywords. This can be helpful when you have some steps that are effectively a list of things.
+
+Example:
+```gherkin
+Scenario: All done
+  Given I am out shopping
+  * I have eggs
+  * I have milk
+  * I have butter
+  When I check my list
+  Then I don't need anything
+```
+
+---
+
+
+---
+
+## Background
+
+Occasionally you'll find yourself repeating the same `Given` steps in all of the scenarios in a `Feature`. You can move such `Given` steps to the background, by grouping them under a `Background` section. A `Background` allows you to add some context to the scenarios that follow it. It can contain one or more `Given` steps, which are run before each scenario, but after any Before hooks.
+
+You can only have one set of `Background` steps per `Feature` or `Rule`. If you need different `Background` steps for different scenarios, consider breaking up your set of scenarios into more `Rule`s or more `Feature`s.
+
+Example:
+```gherkin
+Feature: Multiple site support
+  Only blog owners can post to a blog, except administrators, who can post to all blogs.
+  Background:
+    Given a global administrator named "Greg"
+    And a blog named "Greg's anti-tax rants"
+    And a customer named "Dr. Bill"
+    And a blog named "Expensive Therapy" owned by "Dr. Bill"
+  Scenario: Dr. Bill posts to his own blog
+    Given I am logged in as Dr. Bill
+    When I try to post to "Expensive Therapy"
+    Then I should see "Your article was published."
+  Scenario: Dr. Bill tries to post to somebody else's blog, and fails
+    Given I am logged in as Dr. Bill
+    When I try to post to "Greg's anti-tax rants"
+    Then I should see "Hey! That's not your blog!"
+  Scenario: Greg posts to a client's blog
+    Given I am logged in as Greg
+    When I try to post to "Expensive Therapy"
+    Then I should see "Your article was published."
+```
+
+---
+
+
+---
+
+## Scenario Outline
+
+The `Scenario Outline` keyword can be used to run the same `Scenario` multiple times, with different combinations of values. The keyword `Scenario Template` is a synonym of the keyword `Scenario Outline`.
+
+Scenario outlines allow us to more concisely express these scenarios through the use of a template with `< >`-delimited parameters. The steps can use `< >` delimited parameters that reference headers in the examples table. Cucumber will replace these parameters with values from the table before it tries to match the step against a step definition.
+
+Example:
+```gherkin
+Scenario Outline: eating
+  Given there are <start> cucumbers
+  When I eat <eat> cucumbers
+  Then I should have <left> cucumbers
+  Examples:
+    | start | eat | left |
+    |   12  |  5  |   7  |
+    |   20  |  5  |  15  |
+```
+
+---
+
+
+---
+
+## Examples
+
+A `Scenario Outline` must contain one or more `Examples` (or `Scenarios`) section(s). Its steps are interpreted as a template which is never directly run. Instead, the `Scenario Outline` is run once for each row in the `Examples` section beneath it (not counting the first header row).
+
+You can use parameters in `Scenario Outline` descriptions as well as in multiline step arguments.
+
+---
+
 
 ---
 
@@ -54,10 +293,10 @@ Gherkin is localised for many spoken languages; each has their own localised equ
 In some cases you might want to pass more data to a step than fits on a single line. For this purpose Gherkin has Doc Strings and Data Tables.
 
 ### Doc Strings
+Handy for passing a larger piece of text to a step definition. The text should be offset by delimiters consisting of three double-quote marks on lines of their own. Indentation of the opening `"""` is unimportant, but the indentation inside the triple quotes is significant. Each line of the Doc String will be dedented according to the opening `"""`.
 
-Doc Strings are handy for passing a larger piece of text to a step definition. The text should be offset by delimiters consisting of three double-quote marks on lines of their own:
-
-```
+Example:
+```gherkin
 Given a blog post named "Random" with Markdown body
   """
   Some Title, Eh?
@@ -67,13 +306,8 @@ Given a blog post named "Random" with Markdown body
   """
 ```
 
-In your step definition, there’s no need to find this text and match it in your pattern. It will automatically be passed as the last argument in the step definition.
-
-Indentation of the opening `"""` is unimportant, although common practice is two spaces in from the enclosing step. The indentation inside the triple quotes, however, is significant. Each line of the Doc String will be dedented according to the opening `"""`. Indentation beyond the column of the opening `"""` will therefore be preserved.
-
 Doc strings also support using three backticks as the delimiter:
-
-```
+```gherkin
 Given a blog post named "Random" with Markdown body
   ```
   Some Title, Eh?
@@ -84,8 +318,7 @@ Given a blog post named "Random" with Markdown body
 ```
 
 It's possible to annotate the DocString with the type of content it contains:
-
-```
+```gherkin
 Given a blog post named "Random" with Markdown body
   """markdown
   Some Title, Eh?
@@ -96,10 +329,10 @@ Given a blog post named "Random" with Markdown body
 ```
 
 ### Data Tables
+Handy for passing a list of values to a step definition. Just like Doc Strings, Data Tables will be passed to the step definition as the last argument. If you want to use a newline character in a table cell, you can write this as `\n`. If you need a `|` as part of the cell, you can escape it as `\|`. And finally, if you need a `\`, you can escape that with `\\`.
 
-Data Tables are handy for passing a list of values to a step definition:
-
-```
+Example:
+```gherkin
 Given the following users exist:
   | name   | email              | twitter         |
   | Aslak  | aslak@cucumber.io  | @aslak_hellesoy |
@@ -107,40 +340,8 @@ Given the following users exist:
   | Matt   | matt@cucumber.io   | @mattwynne      |
 ```
 
-Just like Doc Strings, Data Tables will be passed to the step definition as the last argument.
-
-If you want to use a newline character in a table cell, you can write this as `\n`. If you need a `|` as part of the cell, you can escape it as `\|`. And finally, if you need a `\`, you can escape that with `\\`.
-
-Cucumber provides a rich API for manipulating tables from within step definitions. See the Data Table API reference for more details.
-
 ---
 
-## Spoken Languages
 
-The language you choose for Gherkin should be the same language your users and domain experts use when they talk about the domain. Translating between two languages should be avoided.
-
-This is why Gherkin has been translated to over 70 languages.
-
-Here is a Gherkin scenario written in Norwegian:
-
-```
-# language: no
-Funksjonalitet: Gjett et ord
-
-  Eksempel: Ordmaker starter et spill
-    Når Ordmaker starter et spill
-    Så må Ordmaker vente på at Gjetter blir med
-
-  Eksempel: Gjetter blir med
-    Gitt at Ordmaker har startet et spill med ordet "bløtt"
-    Når Gjetter blir med på Ordmakers spill
-    Så må Gjetter gjette et ord på 5 bokstaver
-```
-
-A `# language:` header on the first line of a feature file tells Cucumber what spoken language to use - for example `# language: fr` for French. If you omit this header, Cucumber will default to English (`en`).
-
-Some Cucumber implementations also let you set the default language in the configuration, so you don't need to place the `# language` header in every file.
-
----
 
 For more details, see the full Gherkin reference at [https://cucumber.io/docs/gherkin/reference](https://cucumber.io/docs/gherkin/reference)
