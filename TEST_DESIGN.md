@@ -33,9 +33,7 @@ When triggering errors, ensure that application messaging is accurate and action
 
 After creating a feature file, create a matching step definitions file using gherkin and javascript syntax, providing an empty function with no parameters for each step.
 
-Make use of gherkin features such as step arguments and data tables as specified here https://cucumber.io/docs/gherkin/reference#step-arguments
-
-If you produce similar scenarios that perform the same actions with different data, use a Scenario Outline as specified here https://cucumber.io/docs/gherkin/reference#scenario-outline
+Follow the Gherkin standards as detailed in #GherkinReference.md.
 
 Then refactor the feature file and step definitions to reduce the number of unique step definitions needed.
 
