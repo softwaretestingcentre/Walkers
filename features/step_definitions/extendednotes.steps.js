@@ -11,11 +11,12 @@ Given('Walker opens the app and goes offline', function () {});
 When('Walker enters {string} in the {string} section', function () {});
 When('Walker selects the date {string}', function () {});
 When('Walker toggles the {string} panel', function () {});
-When('Walker clicks the "Save Entire Form" button', function () {});
 When('In tab {word} Walker enters {string} in the {string} section and saves', function () {});
 When('Walker edits the {string} section to {string} and clicks save', function () {});
 When('Walker returns online', function () {});
 When('Walker pastes a {int}MB text payload into the {string} section', function () {});
+When('Walker saves the {string} section', function () {});
+When('Walker saves the entire form', function () {});
 
 // Assertions
 Then('the notes in the {string} section should be {string} after reload', function () {});
@@ -28,7 +29,3 @@ Then('the app shows the content from the last saved tab as authoritative', funct
 Then('the app synchronises the offline edits to the server', function () {});
 Then('the app stores the content but does not execute embedded scripts when displayed', function () {});
 Then('the app accepts the large payload and the UI remains responsive', function () {});
-
-When('Walker saves the {string} section', function () {});
-When('Walker saves the entire form', function () {});
-
