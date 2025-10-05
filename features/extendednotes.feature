@@ -1,7 +1,7 @@
 Feature: Meeting notes app extended functionality
 
   Scenario: User edits and saves meeting notes
-    Given Walker is viewing the meeting notes for date "2025-10-04"
+    Given Walker is viewing the meeting notes for date "2025-10-05"
     When Walker enters "Some updated notes" in the "Hallowing the Meeting" section
     And Walker clicks the "Save" button for the "Hallowing the Meeting" section
     Then the notes in the "Hallowing the Meeting" section should be "Some updated notes" after reload
